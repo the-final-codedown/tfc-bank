@@ -1,6 +1,5 @@
 package fr.polytech.al.tfc.profile.controller;
 
-
 import fr.polytech.al.tfc.profile.model.Profile;
 import fr.polytech.al.tfc.profile.repository.ProfileRepository;
 import org.springframework.http.HttpStatus;
