@@ -1,4 +1,4 @@
-package fr.polytech.al.tfc.tfcprofile;
+package fr.polytech.al.tfc.profile;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
