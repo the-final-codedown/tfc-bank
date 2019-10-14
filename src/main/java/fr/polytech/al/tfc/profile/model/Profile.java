@@ -10,9 +10,9 @@ import org.springframework.data.annotation.Id;
 public class Profile {
 
     @Id
-    public Long id;
+    private String id;
 
     @NonNull
-    public String email;
+    private String email;
 
 }

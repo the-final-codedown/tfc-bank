@@ -3,6 +3,7 @@ package fr.polytech.al.tfc.profile.controller;
 
 import fr.polytech.al.tfc.profile.model.Profile;
 import fr.polytech.al.tfc.profile.repository.ProfileRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +11,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController("profile")
 public class ProfileController {
 
+    private final
     ProfileRepository profileRepository;
+
+    @Autowired
+    public ProfileController(ProfileRepository profileRepository) {
+        this.profileRepository = profileRepository;
+    }
 
     @GetMapping
     public ResponseEntity<Profile> getProfileByEmail(@PathVariable(value = "email") String email) {
