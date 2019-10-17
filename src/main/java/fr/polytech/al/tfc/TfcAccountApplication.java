@@ -1,13 +1,13 @@
-package fr.polytech.al.tfc.profile;
+package fr.polytech.al.tfc;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TfcProfileApplication {
+public class TfcAccountApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(TfcProfileApplication.class, args);
+        SpringApplication.run(TfcAccountApplication.class, args);
     }
 
 }
