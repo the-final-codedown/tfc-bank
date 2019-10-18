@@ -8,24 +8,20 @@ import fr.polytech.al.tfc.account.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController("transaction")
 public class TransactionController {
-    final
-    TransactionRepository transactionRepository;
+    final TransactionRepository transactionRepository;
     final AccountRepository accountRepository;
 
     @Autowired
     public TransactionController(TransactionRepository transactionRepository, AccountRepository accountRepository) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
-
     }
 
     @PostMapping

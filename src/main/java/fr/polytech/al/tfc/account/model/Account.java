@@ -18,7 +18,7 @@ public class Account {
     @NonNull
     private float money;
 
-    private float amountSlidingWindow;
+    private float amountSlidingWindow = 300;
 
     /**
      * One week window

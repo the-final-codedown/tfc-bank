@@ -18,7 +18,7 @@ public class ProfileController {
         this.profileRepository = profileRepository;
     }
 
-    @GetMapping
+    @GetMapping("/{email}")
     public ResponseEntity<Profile> getProfileByEmail(@PathVariable(value = "email") String email) {
         Profile profile = profileRepository.findProfileByEmail(email);
         return new ResponseEntity<>(profile, HttpStatus.OK);
