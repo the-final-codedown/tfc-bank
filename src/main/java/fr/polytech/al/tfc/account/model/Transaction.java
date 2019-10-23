@@ -28,6 +28,4 @@ public class Transaction {
 
     @NonNull
     private LocalDateTime date;
-
-
 }

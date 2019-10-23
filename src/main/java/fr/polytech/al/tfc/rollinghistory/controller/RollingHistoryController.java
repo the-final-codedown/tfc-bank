@@ -25,6 +25,7 @@ public class RollingHistoryController {
 
     @Scheduled(fixedDelay = 5000)
     public void processHistory() {
+        //TODO improve efficiency of the algorithm
         List<Account> accounts = accountRepository.findAll();
         for (Account account : accounts) {
             LocalDateTime now = LocalDateTime.now();

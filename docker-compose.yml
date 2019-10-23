@@ -9,16 +9,19 @@ services:
     networks:
     - backend
   app:
-    build: .
+    build: ./src/docker
     ports:
     - 8080:8080
     links:
     - mongodb
+    - zookeeper
+    - broker
     depends_on:
     - zookeeper
     - broker
     environment:
       spring.data.mongodb.uri: mongodb://mongodb:27017/account
+      SPRING_PROFILES_ACTIVE: docker
   zookeeper:
     image: confluentinc/cp-zookeeper:5.3.1
     ports:
@@ -33,6 +36,8 @@ services:
     ports:
     - 29092:29092
     - 9092:9092
+    links:
+    - zookeeper
     depends_on:
     - zookeeper
     environment:
@@ -48,6 +53,15 @@ services:
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_ENABLE: 'true'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
+    networks:
+    - backend
+  start_dependencies:
+    image: dadarek/wait-for-dependencies
+    depends_on:
+    - zookeeper
+    - mongodb
+    - broker
+    command: mongodb:27017 broker:29092 zookeeper:2181
     networks:
     - backend
 networks:

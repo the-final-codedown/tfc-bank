@@ -27,15 +27,15 @@ import java.util.*;
 @Component
 public class TransactionControllerQueue {
 
-    private static final String app = "kafka.account";
+    private static final String app = "kafka-account";
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
     KafkaConsumer<String, String> consumerTransaction;
 
     @Autowired
     public TransactionControllerQueue(TransactionRepository transactionRepository, AccountRepository accountRepository, @Value("${kafkabroker}") String broker) {
-        String receivingQueueDrone = "DroneService.coordinates";
-        this.consumerTransaction = subscribe(broker, receivingQueueDrone);
+        String receivingTransactionQueue = "kafka-transaction";
+        this.consumerTransaction = subscribe(broker, receivingTransactionQueue);
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
     }
@@ -59,7 +59,7 @@ public class TransactionControllerQueue {
     }
 
     @Scheduled(fixedDelay = 5000)
-    public void listenDroneOrder() {
+    public void listenTransaction() {
         try {
             ConsumerRecords<String, String> records = consumerTransaction.poll(Duration.ofSeconds(1));
             ObjectMapper objectMapper = new ObjectMapper();
