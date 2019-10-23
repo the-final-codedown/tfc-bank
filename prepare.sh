@@ -1,5 +1,5 @@
 #!/bin/bash
 
-mvn clean install
+mvn clean package
 
-cp ./target/tfc-profile-0.0.1-SNAPSHOT.jar ./src/docker/
+docker build -t tfc/app .
