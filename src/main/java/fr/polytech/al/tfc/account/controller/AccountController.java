@@ -22,9 +22,7 @@ public class AccountController {
 
     @PostMapping
     public ResponseEntity<Account> saveAccount(@RequestBody int money) {
-        Account account = Account.builder()
-                .money(money)
-                .build();
+        Account account = new Account(money);
         accountRepository.save(account);
         return new ResponseEntity<>(account, HttpStatus.OK);
     }

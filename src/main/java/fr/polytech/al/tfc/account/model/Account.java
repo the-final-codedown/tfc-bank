@@ -1,16 +1,18 @@
 package fr.polytech.al.tfc.account.model;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Document
 @Data
-@Builder
+@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class Account {
     @Id
     private String accountId;
@@ -25,6 +27,13 @@ public class Account {
      */
     private List<Transaction> transactionsWindow;
     private List<Transaction> transactions;
+
+    public Account(String accountId, @NonNull float money) {
+        this.accountId = accountId;
+        this.money = money;
+        this.transactionsWindow = new ArrayList<>();
+        this.transactions = new ArrayList<>();
+    }
 
     private void addTransactionWindow(Transaction transactionWindow) {
         this.transactionsWindow.add(transactionWindow);

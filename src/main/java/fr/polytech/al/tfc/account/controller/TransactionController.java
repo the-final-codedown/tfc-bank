@@ -29,20 +29,17 @@ public class TransactionController {
     public ResponseEntity<Transaction> addTransaction(String source, String destination, float value, LocalDateTime date) {
         Optional<Account> optionalAccount = accountRepository.findById(source);
         if (optionalAccount.isPresent()) {
-            Transaction transaction = Transaction.builder()
-                    .source(source)
-                    .receiver(destination)
-                    .value(value)
-                    .date(date)
-                    .build();
+            Transaction transaction = new Transaction(source,destination,value,date);
             transactionRepository.save(transaction);
             Account account = optionalAccount.get();
             account.setMoney(account.getMoney() - value);
+
             account.addTransaction(transaction);
             accountRepository.save(account);
             return new ResponseEntity<>(transaction, HttpStatus.OK);
         } else {
-            throw new NoExistingAccountException();
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            //throw new NoExistingAccountException();
         }
     }
 }

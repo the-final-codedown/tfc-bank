@@ -52,17 +52,14 @@ public class TransactionMockSender {
         ObjectMapper objectMapper = new ObjectMapper();
         Random r = new Random();
         float randomFloat = r.nextFloat();
-        Transaction transaction = Transaction.builder().date(LocalDateTime.now())
-                .value(randomFloat)
-                .source(account1.getAccountId())
-                .receiver(account2.getAccountId()).build();
+        Transaction transaction = new Transaction(account1.getAccountId(),account2.getAccountId(),randomFloat,LocalDateTime.now());
         producer.send(new ProducerRecord<>(topic, transaction.getSource(), objectMapper.writeValueAsString(transaction)));
         producer.flush();
     }
 
     public List<Account> giveRandomAccount(List<Account> accounts) {
         List<Account> accountsRandomChosen = new ArrayList<>();
-        Account account = Account.builder().build();
+        Account account = new Account();
         Random random = new Random();
         while (accountsRandomChosen.size() != 2) {
             int randomInteger = random.nextInt(accounts.size() - 1);
