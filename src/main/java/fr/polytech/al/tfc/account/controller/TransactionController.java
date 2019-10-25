@@ -27,19 +27,29 @@ public class TransactionController {
     @PostMapping
     @ResponseBody
     public ResponseEntity<Transaction> addTransaction(String source, String destination, float value, LocalDateTime date) {
-        Optional<Account> optionalAccount = accountRepository.findById(source);
-        if (optionalAccount.isPresent()) {
+        Optional<Account> optionalSourceAccount = accountRepository.findById(source);
+        Optional<Account> optionalDestinationAccount = accountRepository.findById(destination);
+        if (optionalSourceAccount.isPresent() && optionalDestinationAccount.isPresent()) {
             Transaction transaction = new Transaction(source,destination,value,date);
+            Transaction oppositeTransaction = getOppositeTransaction(source,destination,value,date);
             transactionRepository.save(transaction);
-            Account account = optionalAccount.get();
-            account.setMoney(account.getMoney() - value);
+            transactionRepository.save(oppositeTransaction);
+            Account sourceAccount = optionalSourceAccount.get();
+            sourceAccount.setMoney(sourceAccount.getMoney() - value);
+            sourceAccount.setAmountSlidingWindow(sourceAccount.getAmountSlidingWindow() - value);
+            sourceAccount.addPayment(transaction);
+            accountRepository.save(sourceAccount);
 
-            account.addTransaction(transaction);
-            accountRepository.save(account);
+            Account destinationAccount = optionalDestinationAccount.get();
+            destinationAccount.setMoney(destinationAccount.getMoney() + value);
+            destinationAccount.addTransaction(transaction);
             return new ResponseEntity<>(transaction, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             //throw new NoExistingAccountException();
         }
+    }
+    public Transaction getOppositeTransaction(String source,String destination,float value,LocalDateTime localDateTime){
+        return new Transaction(destination,source,value,localDateTime);
     }
 }

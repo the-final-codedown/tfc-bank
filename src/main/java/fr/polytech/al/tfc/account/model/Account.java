@@ -35,12 +35,15 @@ public class Account {
         this.transactions = new ArrayList<>();
     }
 
-    private void addTransactionWindow(Transaction transactionWindow) {
+    public void addTransactionWindow(Transaction transactionWindow) {
         this.transactionsWindow.add(transactionWindow);
     }
 
     public void addTransaction(Transaction transaction) {
         this.transactions.add(transaction);
-        this.addTransactionWindow(transaction);
+    }
+    public void addPayment(Transaction transaction){
+        addTransaction(transaction);
+        addTransactionWindow(transaction);
     }
 }

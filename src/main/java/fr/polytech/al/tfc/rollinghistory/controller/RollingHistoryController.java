@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 @EnableScheduling
 @Component
 public class RollingHistoryController {
+    private int expirationTime = 604800;
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
 
@@ -23,13 +24,21 @@ public class RollingHistoryController {
         this.accountRepository = accountRepository;
     }
 
+    public int getExpirationTime() {
+        return expirationTime;
+    }
+
+    public void setExpirationTime(int expirationTime) {
+        this.expirationTime = expirationTime;
+    }
+
     @Scheduled(fixedDelay = 5000)
     public void processHistory() {
         //TODO improve efficiency of the algorithm
         List<Account> accounts = accountRepository.findAll();
         for (Account account : accounts) {
             LocalDateTime now = LocalDateTime.now();
-            LocalDateTime then = now.minusDays(7);
+            LocalDateTime then = now.minusSeconds(expirationTime);
             List<Transaction> transactions = account.getTransactionsWindow();
             if (!transactions.isEmpty()) {
                 List<Transaction> removedTransactionsWindow = transactions.stream()

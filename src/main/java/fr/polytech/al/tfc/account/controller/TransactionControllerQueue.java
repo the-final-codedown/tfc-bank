@@ -72,7 +72,7 @@ public class TransactionControllerQueue {
                     transactionRepository.save(transaction);
                     Account account = optionalAccount.get();
                     account.setMoney(account.getMoney() - transaction.getValue());
-                    account.addTransaction(transaction);
+                    account.addPayment(transaction);
                     accountRepository.save(account);
                 } else {
                     throw new NoExistingAccountException();
