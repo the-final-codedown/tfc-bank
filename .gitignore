@@ -12,6 +12,7 @@ HELP.md
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**
 !**/src/test/**
+/src/docker/
 
 ### STS ###
 .apt_generated

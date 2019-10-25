@@ -5,12 +5,13 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@RequiredArgsConstructor
+@Document
 public class Profile {
 
     @Id
@@ -21,4 +22,7 @@ public class Profile {
 
     private List<Account> accounts = new ArrayList<>();
 
+    public Profile(@NonNull String email) {
+        this.email = email;
+    }
 }

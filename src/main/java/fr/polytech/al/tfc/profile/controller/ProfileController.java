@@ -7,11 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController("profile")
 public class ProfileController {
 
-    private final
-    ProfileRepository profileRepository;
+    @Autowired
+    private ProfileRepository profileRepository;
 
     @Autowired
     public ProfileController(ProfileRepository profileRepository) {
@@ -20,13 +22,16 @@ public class ProfileController {
 
     @GetMapping("/{email}")
     public ResponseEntity<Profile> getProfileByEmail(@PathVariable(value = "email") String email) {
-        Profile profile = profileRepository.findProfileByEmail(email);
-        return new ResponseEntity<>(profile, HttpStatus.OK);
+        Optional<Profile> profile = profileRepository.findProfileByEmail(email);
+        if(profile.isPresent())
+            return new ResponseEntity<>(profile.get(), HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping
-    public ResponseEntity<Profile> saveProfile(@RequestBody String body) {
-        Profile profile = new Profile(body);
+    public ResponseEntity<Profile> saveProfile(@RequestBody String email) {
+        Profile profile = new Profile(email);
         profileRepository.save(profile);
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }
