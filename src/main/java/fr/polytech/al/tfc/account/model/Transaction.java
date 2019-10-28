@@ -21,12 +21,12 @@ public class Transaction {
     private String receiver;
 
     @NonNull
-    private float value;
+    private Integer value;
 
     @NonNull
     private LocalDateTime date;
 
-    public Transaction(@NonNull String source, @NonNull String receiver, @NonNull float value, @NonNull LocalDateTime date) {
+    public Transaction(@NonNull String source, @NonNull String receiver, @NonNull Integer value, @NonNull LocalDateTime date) {
         this.source = source;
         this.receiver = receiver;
         this.value = value;

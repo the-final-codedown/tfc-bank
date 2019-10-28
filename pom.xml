@@ -6,7 +6,6 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.1.9.RELEASE</version>
-
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>fr.polytech.al.tfc</groupId>
@@ -14,13 +13,20 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>profile</name>
     <description>Demo project for Spring Boot</description>
-
     <properties>
         <kafka.version>2.3.0</kafka.version>
         <java.version>1.8</java.version>
     </properties>
-
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <version>2.1.4.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -35,7 +41,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -69,7 +74,6 @@
             <version>5.1.6.RELEASE</version>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -78,5 +82,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

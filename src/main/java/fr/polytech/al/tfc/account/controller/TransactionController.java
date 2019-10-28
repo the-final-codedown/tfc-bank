@@ -24,9 +24,9 @@ public class TransactionController {
         this.accountRepository = accountRepository;
     }
 
-    @PostMapping
+    @PostMapping("/addTransaction")
     @ResponseBody
-    public ResponseEntity<Transaction> addTransaction(String source, String destination, float value, LocalDateTime date) {
+    public ResponseEntity<Transaction> addTransaction(String source, String destination, Integer value, LocalDateTime date) {
         Optional<Account> optionalSourceAccount = accountRepository.findById(source);
         Optional<Account> optionalDestinationAccount = accountRepository.findById(destination);
         if (optionalSourceAccount.isPresent() && optionalDestinationAccount.isPresent()) {
@@ -49,7 +49,7 @@ public class TransactionController {
             //throw new NoExistingAccountException();
         }
     }
-    public Transaction getOppositeTransaction(String source,String destination,float value,LocalDateTime localDateTime){
+    public Transaction getOppositeTransaction(String source,String destination,Integer value,LocalDateTime localDateTime){
         return new Transaction(destination,source,value,localDateTime);
     }
 }

@@ -23,7 +23,7 @@ public class AccountController {
         this.accountRepository = accountRepository;
     }
 
-    @PostMapping
+    @PostMapping("/saveAccount")
     public ResponseEntity<Account> saveAccount(@RequestBody int money) {
         Account account = new Account(money);
         accountRepository.save(account);

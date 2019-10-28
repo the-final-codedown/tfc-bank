@@ -51,8 +51,8 @@ public class TransactionMockSender {
         Account account2 = accounts.get(1);
         ObjectMapper objectMapper = new ObjectMapper();
         Random r = new Random();
-        float randomFloat = r.nextFloat();
-        Transaction transaction = new Transaction(account1.getAccountId(),account2.getAccountId(),randomFloat,LocalDateTime.now());
+        Integer randomInteger = r.nextInt();
+        Transaction transaction = new Transaction(account1.getAccountId(),account2.getAccountId(),randomInteger,LocalDateTime.now());
         producer.send(new ProducerRecord<>(topic, transaction.getSource(), objectMapper.writeValueAsString(transaction)));
         producer.flush();
     }

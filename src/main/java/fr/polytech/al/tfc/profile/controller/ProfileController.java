@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@RestController("profile")
+@RestController(value = "profile")
 public class ProfileController {
 
     @Autowired
