@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/profiles")
 public class ProfileController {
@@ -25,7 +27,9 @@ public class ProfileController {
 
     @GetMapping("/{email}")
     public ResponseEntity<Profile> getProfileByEmail(@PathVariable(value = "email") String email) {
-        return new ResponseEntity<>(profileRepository.findProfileByEmail(email), HttpStatus.OK);
+        Optional<Profile> profile = profileRepository.findProfileByEmail(email);
+        if(profile.isPresent()) return new ResponseEntity<>(profile.get(), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping
@@ -39,9 +43,12 @@ public class ProfileController {
     public ResponseEntity<Account> createAccountForProfile(@PathVariable(value = "email") String email, @RequestBody String money) {
         Account account = new Account(Integer.parseInt(money));
         accountRepository.save(account);
-        Profile profile = profileRepository.findProfileByEmail(email);
-        profile.addAccount(account);
-        profileRepository.save(profile);
-        return new ResponseEntity<>(account, HttpStatus.OK);
+        Optional<Profile> profile = profileRepository.findProfileByEmail(email);
+        if(profile.isPresent()){
+            profile.get().addAccount(account);
+            profileRepository.save(profile.get());
+            return new ResponseEntity<>(account, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
