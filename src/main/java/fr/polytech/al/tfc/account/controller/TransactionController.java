@@ -1,6 +1,5 @@
 package fr.polytech.al.tfc.account.controller;
 
-import fr.polytech.al.tfc.account.exception.NoExistingAccountException;
 import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.Transaction;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
@@ -8,12 +7,16 @@ import fr.polytech.al.tfc.account.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-@RestController("transaction")
+@RestController
+@RequestMapping("/transactions")
 public class TransactionController {
     final TransactionRepository transactionRepository;
     final AccountRepository accountRepository;
@@ -24,7 +27,7 @@ public class TransactionController {
         this.accountRepository = accountRepository;
     }
 
-    @PostMapping("/addTransaction")
+    @PostMapping
     @ResponseBody
     public ResponseEntity<Transaction> addTransaction(String source, String destination, Integer value, LocalDateTime date) {
         Optional<Account> optionalSourceAccount = accountRepository.findById(source);
@@ -43,6 +46,7 @@ public class TransactionController {
             Account destinationAccount = optionalDestinationAccount.get();
             destinationAccount.setMoney(destinationAccount.getMoney() + value);
             destinationAccount.addTransaction(transaction);
+            accountRepository.save(destinationAccount);
             return new ResponseEntity<>(transaction, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

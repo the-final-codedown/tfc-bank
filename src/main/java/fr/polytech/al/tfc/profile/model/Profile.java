@@ -2,6 +2,7 @@ package fr.polytech.al.tfc.profile.model;
 
 import fr.polytech.al.tfc.account.model.Account;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -12,17 +13,13 @@ import java.util.List;
 
 @Data
 @Document
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class Profile {
-
     @Id
-    private String id;
-
     @NonNull
     private String email;
 
     private List<Account> accounts = new ArrayList<>();
 
-    public Profile(@NonNull String email) {
-        this.email = email;
-    }
 }

@@ -1,7 +1,5 @@
 package fr.polytech.al.tfc.account.controller;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.google.gson.JsonObject;
 import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.Caps;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
@@ -10,10 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
-@RestController("account")
+@RestController
+@RequestMapping("/accounts")
 public class AccountController {
 
     private final AccountRepository accountRepository;
@@ -23,9 +21,9 @@ public class AccountController {
         this.accountRepository = accountRepository;
     }
 
-    @PostMapping("/saveAccount")
-    public ResponseEntity<Account> saveAccount(@RequestBody int money) {
-        Account account = new Account(money);
+    @PostMapping
+    public ResponseEntity<Account> saveAccount(@RequestBody String money) {
+        Account account = new Account(Integer.parseInt(money));
         accountRepository.save(account);
         return new ResponseEntity<>(account, HttpStatus.OK);
     }
@@ -47,7 +45,7 @@ public class AccountController {
             return new ResponseEntity<>(new Caps(account.getMoney(),account.getAmountSlidingWindow()),HttpStatus.OK);
         }
         else{
-            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>((Caps) null, HttpStatus.NOT_FOUND);
         }
     }
 }

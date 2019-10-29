@@ -7,22 +7,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -33,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class ProfileControllerTest {
 
-    private final String emailTest = "test@test.test";
+    private final String emailTest = "test";
     private Profile profile;
 
     @Autowired
@@ -54,7 +44,7 @@ public class ProfileControllerTest {
 
     @Test
     public void getProfileByEmail() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get("/profile/"+emailTest))
+        MvcResult mvcResult = mockMvc.perform(get("/profiles/" + emailTest))
                 .andExpect(status().isOk())
                 .andReturn();
         ObjectMapper objectMapper = new ObjectMapper();

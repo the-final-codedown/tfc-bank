@@ -26,6 +26,10 @@ public class Transaction {
     @NonNull
     private LocalDateTime date;
 
+    public Transaction() {
+
+    }
+
     public Transaction(@NonNull String source, @NonNull String receiver, @NonNull Integer value, @NonNull LocalDateTime date) {
         this.source = source;
         this.receiver = receiver;

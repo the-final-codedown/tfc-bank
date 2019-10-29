@@ -7,13 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
-@RestController(value = "profile")
+@RestController
+@RequestMapping("/profiles")
 public class ProfileController {
 
-    @Autowired
-    private ProfileRepository profileRepository;
+    private final ProfileRepository profileRepository;
 
     @Autowired
     public ProfileController(ProfileRepository profileRepository) {
@@ -22,11 +20,7 @@ public class ProfileController {
 
     @GetMapping("/{email}")
     public ResponseEntity<Profile> getProfileByEmail(@PathVariable(value = "email") String email) {
-        Optional<Profile> profile = profileRepository.findProfileByEmail(email);
-        if(profile.isPresent())
-            return new ResponseEntity<>(profile.get(), HttpStatus.OK);
-        else
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(profileRepository.findProfileByEmail(email), HttpStatus.OK);
     }
 
     @PostMapping
