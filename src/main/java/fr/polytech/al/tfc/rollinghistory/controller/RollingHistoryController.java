@@ -45,7 +45,7 @@ public class RollingHistoryController {
                         .filter(transaction -> transaction.getDate().isBefore(then))
                         .collect(Collectors.toList());
                 for (Transaction transaction : removedTransactionsWindow) {
-                    account.setAmountSlidingWindow(account.getAmountSlidingWindow() + transaction.getValue());
+                    account.setAmountSlidingWindow(account.getAmountSlidingWindow() + transaction.getAmount());
                 }
                 transactions.removeAll(removedTransactionsWindow);
                 account.setTransactionsWindow(transactions);

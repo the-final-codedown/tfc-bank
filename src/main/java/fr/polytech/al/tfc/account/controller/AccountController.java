@@ -29,7 +29,7 @@ public class AccountController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Account> viewAccount(@PathVariable String id){
+    public ResponseEntity<Account> viewAccount(@PathVariable(value = "id") String id) {
         Optional<Account> account = accountRepository.findById(id);
         if(account.isPresent()){
             return new ResponseEntity<>(account.get(), HttpStatus.OK);
@@ -38,7 +38,7 @@ public class AccountController {
         }
     }
     @GetMapping("/{id}/caps")
-    public ResponseEntity<Caps> getCaps(@PathVariable String id){
+    public ResponseEntity<Caps> getCaps(@PathVariable(value = "id") String id) {
         Optional<Account> optionalAccount = accountRepository.findById(id);
         if(optionalAccount.isPresent()){
             Account account = optionalAccount.get();

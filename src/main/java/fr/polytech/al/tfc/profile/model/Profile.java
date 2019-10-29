@@ -22,4 +22,7 @@ public class Profile {
 
     private List<Account> accounts = new ArrayList<>();
 
+    public void addAccount(Account account) {
+        this.accounts.add(account);
+    }
 }

@@ -71,7 +71,7 @@ public class TransactionControllerQueue {
                 if (optionalAccount.isPresent()) {
                     transactionRepository.save(transaction);
                     Account account = optionalAccount.get();
-                    account.setMoney(account.getMoney() - transaction.getValue());
+                    account.setMoney(account.getMoney() - transaction.getAmount());
                     account.addPayment(transaction);
                     accountRepository.save(account);
                 } else {

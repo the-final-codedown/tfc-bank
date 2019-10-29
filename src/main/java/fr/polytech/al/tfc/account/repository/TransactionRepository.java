@@ -15,4 +15,6 @@ public interface TransactionRepository extends MongoRepository<Transaction, Stri
     Transaction findByReceiver(String receiver);
 
     List<Transaction> findAllByDateAfter(LocalDateTime localDateTime);
+
+    List<Transaction> findAllBySourceAndReceiverAndDate(String source, String receiver, LocalDateTime date);
 }

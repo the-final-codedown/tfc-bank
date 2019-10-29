@@ -8,11 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -28,32 +27,28 @@ public class TransactionController {
     }
 
     @PostMapping
-    @ResponseBody
-    public ResponseEntity<Transaction> addTransaction(String source, String destination, Integer value, LocalDateTime date) {
-        Optional<Account> optionalSourceAccount = accountRepository.findById(source);
-        Optional<Account> optionalDestinationAccount = accountRepository.findById(destination);
+    public ResponseEntity<Transaction> addTransaction(@RequestBody Transaction transaction) {
+        Optional<Account> optionalSourceAccount = accountRepository.findById(transaction.getSource());
+        Optional<Account> optionalDestinationAccount = accountRepository.findById(transaction.getReceiver());
         if (optionalSourceAccount.isPresent() && optionalDestinationAccount.isPresent()) {
-            Transaction transaction = new Transaction(source,destination,value,date);
-            Transaction oppositeTransaction = getOppositeTransaction(source,destination,value,date);
             transactionRepository.save(transaction);
+            Transaction oppositeTransaction = new Transaction(transaction);
             transactionRepository.save(oppositeTransaction);
             Account sourceAccount = optionalSourceAccount.get();
-            sourceAccount.setMoney(sourceAccount.getMoney() - value);
-            sourceAccount.setAmountSlidingWindow(sourceAccount.getAmountSlidingWindow() - value);
+            Account destinationAccount = optionalDestinationAccount.get();
+
+            sourceAccount.setMoney(sourceAccount.getMoney() - transaction.getAmount());
+            sourceAccount.setAmountSlidingWindow(sourceAccount.getAmountSlidingWindow() - transaction.getAmount());
             sourceAccount.addPayment(transaction);
             accountRepository.save(sourceAccount);
 
-            Account destinationAccount = optionalDestinationAccount.get();
-            destinationAccount.setMoney(destinationAccount.getMoney() + value);
+            destinationAccount.setMoney(destinationAccount.getMoney() + transaction.getAmount());
             destinationAccount.addTransaction(transaction);
+
             accountRepository.save(destinationAccount);
             return new ResponseEntity<>(transaction, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            //throw new NoExistingAccountException();
         }
-    }
-    public Transaction getOppositeTransaction(String source,String destination,Integer value,LocalDateTime localDateTime){
-        return new Transaction(destination,source,value,localDateTime);
     }
 }

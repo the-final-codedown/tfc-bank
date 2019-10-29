@@ -1,11 +1,16 @@
 package fr.polytech.al.tfc.account.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Data
-@AllArgsConstructor
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class Caps {
+    @NonNull
     private Integer money;
+    @NonNull
     private Integer amountSlidingWindow;
 }

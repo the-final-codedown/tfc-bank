@@ -1,8 +1,9 @@
 package fr.polytech.al.tfc.account.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.polytech.al.tfc.account.model.Account;
+import fr.polytech.al.tfc.account.model.Caps;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static junit.framework.TestCase.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -24,47 +27,48 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class AccountControllerTest {
 
-    private AccountController accountController;
-
+    @Autowired
     private AccountRepository accountRepository;
     @Autowired
+    private AccountController accountController;
+    @Autowired
     private MockMvc mockMvc;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     private Account account;
-    private final String idAccount1 = "idAccount1";
-    private final String idAccount2 = "idAccount2";
-
     @Test
     @DirtiesContext
     public void contextLoads() {
-        Assert.assertNotNull(accountController);
         this.mockMvc = MockMvcBuilders.standaloneSetup(accountController).build();
     }
+
+    //set up is testing saveAccount
     @Before
     public void setUp() throws Exception {
-        account = new Account(idAccount1,300);
         MvcResult mvcResult = mockMvc.perform(post("/accounts")
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .content("300"))
+                .content("800"))
                 .andExpect(status().isOk()).andReturn();
-        mvcResult.getResponse().getContentAsString();
-        accountController = new AccountController(accountRepository);
-    }
-/*
-    @After
-    public void tearDown() throws Exception {
+        account = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Account.class);
     }
 
     @Test
-    public void saveAccount() {
+    public void viewAccount() throws Exception {
+        MvcResult mvcResult = this.mockMvc.perform(get("/accounts/" + account.getAccountId())
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        Account accountRetrieved = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Account.class);
+        assertEquals(300, accountRetrieved.getAmountSlidingWindow().intValue());
+        assertEquals(800, accountRetrieved.getMoney().intValue());
     }
 
     @Test
-    public void viewAccount() {
-        ResponseEntity<Account> res = accountController.viewAccount(idAccount1);
-        assertEquals(HttpStatus.OK,res.getStatusCode());
-        assertEquals(account,res.getBody());
-        res =  accountController.viewAccount(idAccount2);
-        assertEquals(HttpStatus.NO_CONTENT,res.getStatusCode());
-    }*/
+    public void viewCapsForAnAccount() throws Exception {
+        MvcResult mvcResult = this.mockMvc.perform(get("/accounts/" + account.getAccountId() + "/caps")
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        Caps caps = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Caps.class);
+        assertEquals(300, caps.getAmountSlidingWindow().intValue());
+        assertEquals(800, caps.getMoney().intValue());
+    }
 }

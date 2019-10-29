@@ -1,6 +1,8 @@
 package fr.polytech.al.tfc.account.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -9,6 +11,8 @@ import java.time.LocalDateTime;
 
 @Data
 @Document
+@AllArgsConstructor
+@NoArgsConstructor
 public class Transaction {
 
     @Id
@@ -21,19 +25,26 @@ public class Transaction {
     private String receiver;
 
     @NonNull
-    private Integer value;
+    private Integer amount;
 
     @NonNull
     private LocalDateTime date;
 
-    public Transaction() {
-
+    public Transaction(Transaction transaction) {
+        this.source = transaction.getSource();
+        this.amount = transaction.getAmount();
+        this.receiver = transaction.getReceiver();
+        this.date = transaction.getDate();
     }
 
-    public Transaction(@NonNull String source, @NonNull String receiver, @NonNull Integer value, @NonNull LocalDateTime date) {
+    public Transaction(@NonNull String source, @NonNull String receiver, @NonNull Integer amount, @NonNull LocalDateTime date) {
         this.source = source;
         this.receiver = receiver;
-        this.value = value;
+        this.amount = amount;
         this.date = date;
+    }
+
+    public void setDate(String date) {
+        this.date = LocalDateTime.parse(date);
     }
 }

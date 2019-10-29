@@ -1,5 +1,7 @@
 package fr.polytech.al.tfc.profile.controller;
 
+import fr.polytech.al.tfc.account.model.Account;
+import fr.polytech.al.tfc.account.repository.AccountRepository;
 import fr.polytech.al.tfc.profile.model.Profile;
 import fr.polytech.al.tfc.profile.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +15,12 @@ public class ProfileController {
 
     private final ProfileRepository profileRepository;
 
+    private final AccountRepository accountRepository;
+
     @Autowired
-    public ProfileController(ProfileRepository profileRepository) {
+    public ProfileController(ProfileRepository profileRepository, AccountRepository accountRepository) {
         this.profileRepository = profileRepository;
+        this.accountRepository = accountRepository;
     }
 
     @GetMapping("/{email}")
@@ -28,5 +33,15 @@ public class ProfileController {
         Profile profile = new Profile(email);
         profileRepository.save(profile);
         return new ResponseEntity<>(profile, HttpStatus.OK);
+    }
+
+    @PostMapping("/{email}/accounts")
+    public ResponseEntity<Account> createAccountForProfile(@PathVariable(value = "email") String email, @RequestBody String money) {
+        Account account = new Account(Integer.parseInt(money));
+        accountRepository.save(account);
+        Profile profile = profileRepository.findProfileByEmail(email);
+        profile.addAccount(account);
+        profileRepository.save(profile);
+        return new ResponseEntity<>(account, HttpStatus.OK);
     }
 }
