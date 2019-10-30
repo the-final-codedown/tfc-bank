@@ -1,6 +1,7 @@
 package fr.polytech.al.tfc.account.controller;
 
 import fr.polytech.al.tfc.account.model.Account;
+import fr.polytech.al.tfc.account.model.AccountDTO;
 import fr.polytech.al.tfc.account.model.Caps;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,8 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<Account> saveAccount(@RequestBody String money) {
-        Account account = new Account(Integer.parseInt(money));
+    public ResponseEntity<Account> saveAccount(@RequestBody AccountDTO accountDTO) {
+        Account account = new Account(accountDTO);
         accountRepository.save(account);
         return new ResponseEntity<>(account, HttpStatus.OK);
     }

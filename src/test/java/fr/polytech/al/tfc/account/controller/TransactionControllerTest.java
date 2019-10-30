@@ -3,6 +3,7 @@ package fr.polytech.al.tfc.account.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import fr.polytech.al.tfc.account.model.Account;
+import fr.polytech.al.tfc.account.model.AccountType;
 import fr.polytech.al.tfc.account.model.Transaction;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
 import fr.polytech.al.tfc.account.repository.TransactionRepository;
@@ -55,8 +56,8 @@ public class TransactionControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        account1 = new Account(idAccount1, 300);
-        account2 = new Account(idAccount2, 300);
+        account1 = new Account(idAccount1, 300, AccountType.CHECKACCOUNT);
+        account2 = new Account(idAccount2, 300,AccountType.CHECKACCOUNT);
 
         accountRepository.save(account1);
         accountRepository.save(account2);

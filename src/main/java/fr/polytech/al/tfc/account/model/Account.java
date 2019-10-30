@@ -21,15 +21,24 @@ public class Account {
 
     private Integer amountSlidingWindow = 300;
 
+    @NonNull
+    private AccountType accountType;
+
     /**
      * One week window
      */
     private List<Transaction> transactionsWindow = new ArrayList<>();
     private List<Transaction> transactions = new ArrayList<>();
 
-    public Account(String accountId, @NonNull Integer money) {
+    public Account(String accountId, @NonNull Integer money, AccountType accountType) {
+        this.accountType = accountType;
         this.accountId = accountId;
         this.money = money;
+    }
+
+    public Account(AccountDTO accountDTO) {
+        this.accountType = accountDTO.getAccountType();
+        this.money = accountDTO.getMoney();
     }
 
     public void addTransactionWindow(Transaction transactionWindow) {

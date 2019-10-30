@@ -1,6 +1,9 @@
 package fr.polytech.al.tfc.profile.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
+import fr.polytech.al.tfc.account.model.AccountDTO;
+import fr.polytech.al.tfc.account.model.AccountType;
 import fr.polytech.al.tfc.profile.model.Profile;
 import fr.polytech.al.tfc.profile.repository.ProfileRepository;
 import org.junit.After;
@@ -80,9 +83,15 @@ public class ProfileControllerTest {
         Profile profile = new Profile(emailTest);
         profileRepository.save(profile);
         assertEquals(0,profile.getAccounts().size());
+
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("money",800);
+        jsonObject.addProperty("accountType", AccountType.CHECKACCOUNT.name());
+
         mockMvc.perform(post("/profiles/"+emailTest+"/accounts")
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .content("300"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonObject.toString()))
                 .andExpect(status().isOk());
         profile = profileRepository.findProfileByEmail(emailTest).get();
         assertEquals(1,profile.getAccounts().size());

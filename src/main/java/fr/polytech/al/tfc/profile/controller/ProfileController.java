@@ -1,6 +1,7 @@
 package fr.polytech.al.tfc.profile.controller;
 
 import fr.polytech.al.tfc.account.model.Account;
+import fr.polytech.al.tfc.account.model.AccountDTO;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
 import fr.polytech.al.tfc.profile.model.Profile;
 import fr.polytech.al.tfc.profile.repository.ProfileRepository;
@@ -40,8 +41,8 @@ public class ProfileController {
     }
 
     @PostMapping("/{email}/accounts")
-    public ResponseEntity<Account> createAccountForProfile(@PathVariable(value = "email") String email, @RequestBody String money) {
-        Account account = new Account(Integer.parseInt(money));
+    public ResponseEntity<Account> createAccountForProfile(@PathVariable(value = "email") String email, @RequestBody AccountDTO accountDTO) {
+        Account account = new Account(accountDTO);
         accountRepository.save(account);
         Optional<Profile> profile = profileRepository.findProfileByEmail(email);
         if(profile.isPresent()){

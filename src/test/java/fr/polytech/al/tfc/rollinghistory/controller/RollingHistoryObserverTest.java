@@ -1,6 +1,7 @@
 package fr.polytech.al.tfc.rollinghistory.controller;
 
 import fr.polytech.al.tfc.account.model.Account;
+import fr.polytech.al.tfc.account.model.AccountType;
 import fr.polytech.al.tfc.account.model.Transaction;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
 import fr.polytech.al.tfc.account.repository.TransactionRepository;
@@ -20,13 +21,13 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class RollingHistoryControllerTest {
+public class RollingHistoryObserverTest {
 
     private String idAccount1 = "idAccount1";
     private String idAccount2 = "idAccount2";
 
     @Autowired
-    private RollingHistoryController rollingHistoryController;
+    private RollingHistoryObserver rollingHistoryController;
 
     @Autowired
     private AccountRepository accountRepository;
@@ -37,13 +38,13 @@ public class RollingHistoryControllerTest {
     public void setUp() throws Exception {
         Transaction transaction1 = new Transaction(idAccount1, idAccount2, 29, LocalDateTime.now());
         Transaction transaction2 = new Transaction(idAccount1, idAccount2, 29, LocalDateTime.now().minusDays(7));
-        Account account = new Account(idAccount1, 300);
+        Account account = new Account(idAccount1, 300, AccountType.CHECKACCOUNT);
 
         account.addPayment(transaction1);
         account.addPayment(transaction2);
         accountRepository.save(account);
 
-        account = new Account(idAccount2, 300);
+        account = new Account(idAccount2, 300,AccountType.CHECKACCOUNT);
         account.addTransaction(transaction1);
         account.addTransaction(transaction2);
         accountRepository.save(account);
