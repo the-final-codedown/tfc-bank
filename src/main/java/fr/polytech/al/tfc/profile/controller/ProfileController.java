@@ -29,8 +29,9 @@ public class ProfileController {
     @GetMapping("/{email}")
     public ResponseEntity<Profile> getProfileByEmail(@PathVariable(value = "email") String email) {
         Optional<Profile> profile = profileRepository.findProfileByEmail(email);
-        if(profile.isPresent()) return new ResponseEntity<>(profile.get(), HttpStatus.OK);
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return profile
+                .map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
@@ -45,7 +46,7 @@ public class ProfileController {
         Account account = new Account(accountDTO);
         accountRepository.save(account);
         Optional<Profile> profile = profileRepository.findProfileByEmail(email);
-        if(profile.isPresent()){
+        if (profile.isPresent()) {
             profile.get().addAccount(account);
             profileRepository.save(profile.get());
             return new ResponseEntity<>(account, HttpStatus.OK);

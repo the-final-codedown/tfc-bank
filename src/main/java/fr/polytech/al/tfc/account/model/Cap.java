@@ -8,9 +8,11 @@ import lombok.RequiredArgsConstructor;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class Caps {
+public class Cap {
+
     @NonNull
     private Integer money;
+
     @NonNull
     private Integer amountSlidingWindow;
 }

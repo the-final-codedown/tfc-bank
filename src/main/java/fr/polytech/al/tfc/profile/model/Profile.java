@@ -16,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class Profile {
+
     @Id
     @NonNull
     private String email;

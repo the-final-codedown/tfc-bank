@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Account {
+
     @Id
     private String accountId;
 
@@ -48,7 +49,8 @@ public class Account {
     public void addTransaction(Transaction transaction) {
         this.transactions.add(transaction);
     }
-    public void addPayment(Transaction transaction){
+
+    public void addPayment(Transaction transaction) {
         addTransaction(transaction);
         addTransactionWindow(transaction);
     }

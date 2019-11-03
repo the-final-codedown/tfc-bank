@@ -2,7 +2,7 @@ package fr.polytech.al.tfc.account.controller;
 
 import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.AccountDTO;
-import fr.polytech.al.tfc.account.model.Caps;
+import fr.polytech.al.tfc.account.model.Cap;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,21 +32,20 @@ public class AccountController {
     @GetMapping("/{id}")
     public ResponseEntity<Account> viewAccount(@PathVariable(value = "id") String id) {
         Optional<Account> account = accountRepository.findById(id);
-        if(account.isPresent()){
-            return new ResponseEntity<>(account.get(), HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return account
+                .map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-    @GetMapping("/{id}/caps")
-    public ResponseEntity<Caps> getCaps(@PathVariable(value = "id") String id) {
+
+    @GetMapping("/{id}/cap")
+    public ResponseEntity<Cap> getCap(@PathVariable(value = "id") String id) {
+        System.out.println("Fetching account with id " + id);
         Optional<Account> optionalAccount = accountRepository.findById(id);
-        if(optionalAccount.isPresent()){
+        if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
-            return new ResponseEntity<>(new Caps(account.getMoney(),account.getAmountSlidingWindow()),HttpStatus.OK);
-        }
-        else{
-            return new ResponseEntity<>((Caps) null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Cap(account.getMoney(), account.getAmountSlidingWindow()), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>((Cap) null, HttpStatus.NOT_FOUND);
         }
     }
 }

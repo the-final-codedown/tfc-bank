@@ -13,15 +13,16 @@ public class TfcAccountApplication implements CommandLineRunner {
 
     @Autowired
     private AccountRepository accountRepository;
+
     public static void main(String[] args) {
         SpringApplication.run(TfcAccountApplication.class, args);
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         Account account = new Account(300, AccountType.CHECKACCOUNT);
-        Account account1 = new Account(500,AccountType.CHECKACCOUNT);
-        Account account2 = new Account(1000,AccountType.CHECKACCOUNT);
+        Account account1 = new Account(500, AccountType.CHECKACCOUNT);
+        Account account2 = new Account(1000, AccountType.CHECKACCOUNT);
         accountRepository.save(account);
         accountRepository.save(account1);
         accountRepository.save(account2);

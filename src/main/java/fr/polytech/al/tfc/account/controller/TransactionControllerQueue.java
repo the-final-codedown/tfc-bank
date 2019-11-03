@@ -30,7 +30,7 @@ public class TransactionControllerQueue {
     private static final String app = "kafka-account";
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
-    KafkaConsumer<String, String> consumerTransaction;
+    private KafkaConsumer<String, String> consumerTransaction;
 
     @Autowired
     public TransactionControllerQueue(TransactionRepository transactionRepository, AccountRepository accountRepository, @Value("${kafkabroker}") String broker) {
@@ -43,7 +43,7 @@ public class TransactionControllerQueue {
     public KafkaConsumer<String, String> subscribe(String kafkaBrokers, String receivingQueue) {
 
         String topic = String.format("%s", receivingQueue);
-        String groupId = String.format("%s", receivingQueue, app);
+        String groupId = String.format("%s %s", receivingQueue, app);
 
         Map<String, Object> config = new HashMap<>();
         config.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, kafkaBrokers);

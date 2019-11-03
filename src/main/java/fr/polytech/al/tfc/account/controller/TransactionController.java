@@ -17,8 +17,9 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/transactions")
 public class TransactionController {
-    final TransactionRepository transactionRepository;
-    final AccountRepository accountRepository;
+
+    private final TransactionRepository transactionRepository;
+    private final AccountRepository accountRepository;
 
     @Autowired
     public TransactionController(TransactionRepository transactionRepository, AccountRepository accountRepository) {

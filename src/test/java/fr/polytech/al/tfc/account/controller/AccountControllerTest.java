@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.AccountType;
-import fr.polytech.al.tfc.account.model.Caps;
+import fr.polytech.al.tfc.account.model.Cap;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +18,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import springfox.documentation.spring.web.json.Json;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -73,12 +72,12 @@ public class AccountControllerTest {
 
     @Test
     public void viewCapsForAnAccount() throws Exception {
-        MvcResult mvcResult = this.mockMvc.perform(get("/accounts/" + account.getAccountId() + "/caps")
+        MvcResult mvcResult = this.mockMvc.perform(get("/accounts/" + account.getAccountId() + "/cap")
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
-        Caps caps = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Caps.class);
-        assertEquals(300, caps.getAmountSlidingWindow().intValue());
-        assertEquals(800, caps.getMoney().intValue());
+        Cap cap = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Cap.class);
+        assertEquals(300, cap.getAmountSlidingWindow().intValue());
+        assertEquals(800, cap.getMoney().intValue());
     }
 }

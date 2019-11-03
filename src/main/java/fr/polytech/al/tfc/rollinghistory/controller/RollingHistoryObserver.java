@@ -15,9 +15,10 @@ import java.util.stream.Collectors;
 @EnableScheduling
 @Component
 public class RollingHistoryObserver {
-    private int expirationTime = 604800;
+    
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
+    private int expirationTime = 604800;
 
     public RollingHistoryObserver(TransactionRepository transactionRepository, AccountRepository accountRepository) {
         this.transactionRepository = transactionRepository;

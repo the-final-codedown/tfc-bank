@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
-@EnableScheduling
+//@EnableScheduling
 @Component
 public class TransactionMockSender {
 
@@ -44,7 +44,7 @@ public class TransactionMockSender {
         this.accountRepository = accountRepository;
     }
 
-    @Scheduled(fixedDelay = 5000)
+    //@Scheduled(fixedDelay = 5000)
     public void addTransactionIntoAccounts() throws JsonProcessingException {
         List<Account> accounts = giveRandomAccount(accountRepository.findAll());
         Account account1 = accounts.get(0);

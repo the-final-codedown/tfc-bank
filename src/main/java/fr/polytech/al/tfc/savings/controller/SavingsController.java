@@ -19,7 +19,7 @@ public class SavingsController {
     }
 
     @PostMapping
-    public ResponseEntity<String> startComputingSavings(){
+    public ResponseEntity<String> startComputingSavings() {
         savingsObserver.computeSavings();
         return new ResponseEntity<>(HttpStatus.OK);
     }
