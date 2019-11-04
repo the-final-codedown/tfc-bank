@@ -40,12 +40,9 @@ public class AccountController {
     @GetMapping("/{id}/cap")
     public ResponseEntity<Cap> getCap(@PathVariable(value = "id") String id) {
         System.out.println("Fetching account with id " + id);
-        Optional<Account> optionalAccount = accountRepository.findById(id);
-        if (optionalAccount.isPresent()) {
-            Account account = optionalAccount.get();
-            return new ResponseEntity<>(new Cap(account.getMoney(), account.getAmountSlidingWindow()), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>((Cap) null, HttpStatus.NOT_FOUND);
-        }
+        Optional<Account> account = accountRepository.findById(id);
+        return account
+                .map(value -> new ResponseEntity<>(new Cap(value.getMoney(), value.getAmountSlidingWindow()), HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

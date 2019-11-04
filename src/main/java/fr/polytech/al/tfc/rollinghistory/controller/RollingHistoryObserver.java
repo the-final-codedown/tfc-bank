@@ -18,7 +18,7 @@ public class RollingHistoryObserver {
     
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
-    private int expirationTime = 604800;
+    private int expirationTime = 604800; // Represents 7 days in seconds
 
     public RollingHistoryObserver(TransactionRepository transactionRepository, AccountRepository accountRepository) {
         this.transactionRepository = transactionRepository;

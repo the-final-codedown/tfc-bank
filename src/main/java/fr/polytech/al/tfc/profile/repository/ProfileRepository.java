@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
+@Repository("tfc.profile")
 public interface ProfileRepository extends MongoRepository<Profile, String> {
 
     Optional<Profile> findProfileByEmail(String email);

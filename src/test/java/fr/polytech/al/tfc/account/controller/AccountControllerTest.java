@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.AccountType;
+import fr.polytech.al.tfc.account.model.BankAccount;
 import fr.polytech.al.tfc.account.model.Cap;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
 import org.junit.Before;
@@ -31,13 +32,17 @@ public class AccountControllerTest {
 
     @Autowired
     private AccountRepository accountRepository;
+
     @Autowired
     private AccountController accountController;
+
     @Autowired
     private MockMvc mockMvc;
+
     private ObjectMapper objectMapper = new ObjectMapper();
 
     private Account account;
+
     @Test
     @DirtiesContext
     public void contextLoads() {
@@ -48,8 +53,8 @@ public class AccountControllerTest {
     @Before
     public void setUp() throws Exception {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("money",800);
-        jsonObject.addProperty("accountType", AccountType.CHECKACCOUNT.name());
+        jsonObject.addProperty("money", 800);
+        jsonObject.addProperty("accountType", AccountType.CHECK.name());
 
         MvcResult mvcResult = mockMvc.perform(post("/accounts")
                 .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -79,5 +84,17 @@ public class AccountControllerTest {
         Cap cap = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Cap.class);
         assertEquals(300, cap.getAmountSlidingWindow().intValue());
         assertEquals(800, cap.getMoney().intValue());
+    }
+
+    @Test
+    public void immutableBank() {
+        if (!accountRepository.existsById("bank")) {
+            accountRepository.save(new BankAccount());
+        }
+        Account bank = accountRepository.findById("bank").get();
+        assertEquals(Integer.MAX_VALUE, (int) bank.getMoney());
+        bank.setMoney(200);
+        assertEquals(Integer.MAX_VALUE, (int) bank.getMoney());
+        assertEquals("bank", bank.getAccountId());
     }
 }

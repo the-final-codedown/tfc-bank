@@ -19,9 +19,10 @@ import java.util.Optional;
 public class TransactionController {
 
     private final TransactionRepository transactionRepository;
+
     private final AccountRepository accountRepository;
 
-    @Autowired
+    @Autowired // TODO search if optional ?
     public TransactionController(TransactionRepository transactionRepository, AccountRepository accountRepository) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
@@ -33,20 +34,19 @@ public class TransactionController {
         Optional<Account> optionalDestinationAccount = accountRepository.findById(transaction.getReceiver());
         if (optionalSourceAccount.isPresent() && optionalDestinationAccount.isPresent()) {
             transactionRepository.save(transaction);
+
+            // TODO needed?
             Transaction oppositeTransaction = new Transaction(transaction);
             transactionRepository.save(oppositeTransaction);
+            
             Account sourceAccount = optionalSourceAccount.get();
-            Account destinationAccount = optionalDestinationAccount.get();
-
-            sourceAccount.setMoney(sourceAccount.getMoney() - transaction.getAmount());
-            sourceAccount.setAmountSlidingWindow(sourceAccount.getAmountSlidingWindow() - transaction.getAmount());
-            sourceAccount.addPayment(transaction);
+            sourceAccount.processTransaction(transaction, true);
             accountRepository.save(sourceAccount);
 
-            destinationAccount.setMoney(destinationAccount.getMoney() + transaction.getAmount());
-            destinationAccount.addTransaction(transaction);
-
+            Account destinationAccount = optionalDestinationAccount.get();
+            destinationAccount.processTransaction(transaction, false);
             accountRepository.save(destinationAccount);
+
             return new ResponseEntity<>(transaction, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

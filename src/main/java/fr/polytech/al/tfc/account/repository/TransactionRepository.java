@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Repository
+@Repository("tfc.transaction")
 public interface TransactionRepository extends MongoRepository<Transaction, String> {
 
     Transaction findBySource(String source);

@@ -4,8 +4,6 @@ import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.AccountType;
 import fr.polytech.al.tfc.account.model.Transaction;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
-import fr.polytech.al.tfc.account.repository.TransactionRepository;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,27 +29,21 @@ public class RollingHistoryObserverTest {
 
     @Autowired
     private AccountRepository accountRepository;
-    @Autowired
-    private TransactionRepository transactionRepository;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Transaction transaction1 = new Transaction(idAccount1, idAccount2, 29, LocalDateTime.now());
         Transaction transaction2 = new Transaction(idAccount1, idAccount2, 29, LocalDateTime.now().minusDays(7));
-        Account account = new Account(idAccount1, 300, AccountType.CHECKACCOUNT);
+        Account account = new Account(idAccount1, 300, AccountType.CHECK);
 
         account.addPayment(transaction1);
         account.addPayment(transaction2);
         accountRepository.save(account);
 
-        account = new Account(idAccount2, 300,AccountType.CHECKACCOUNT);
+        account = new Account(idAccount2, 300, AccountType.CHECK);
         account.addTransaction(transaction1);
         account.addTransaction(transaction2);
         accountRepository.save(account);
-    }
-
-    @After
-    public void tearDown() throws Exception {
     }
 
     @Test

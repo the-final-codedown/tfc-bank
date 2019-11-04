@@ -14,7 +14,7 @@ public class SavingsObserver {
     private AccountRepository accountRepository;
 
     public void computeSavings() {
-        for (Account account : accountRepository.findAllByAccountType(AccountType.SAVINGSACCOUNT)) {
+        for (Account account : accountRepository.findAllByAccountType(AccountType.SAVINGS)) {
             account.setMoney((int) Math.round(account.getMoney() * interest));
             accountRepository.save(account);
         }

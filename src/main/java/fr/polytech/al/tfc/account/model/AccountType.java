@@ -1,10 +1,6 @@
 package fr.polytech.al.tfc.account.model;
 
 public enum AccountType {
-    SAVINGSACCOUNT("savingsAccount"), CHECKACCOUNT("checkAccount");
+    SAVINGS, CHECK
 
-    String name;
-    AccountType(String name) {
-        this.name = name;
-    }
 }

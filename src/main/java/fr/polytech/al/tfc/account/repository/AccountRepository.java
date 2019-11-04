@@ -7,7 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
+@Repository("tfc.account")
 public interface AccountRepository extends MongoRepository<Account, String> {
+
     List<Account> findAllByAccountType(AccountType accountType);
 }

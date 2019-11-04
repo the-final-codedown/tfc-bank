@@ -3,7 +3,6 @@ package fr.polytech.al.tfc.savings.controller;
 import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.AccountType;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,22 +32,16 @@ public class SavingsControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private String accoundId1 = "account1";
-    private String accoundId2 = "account2";
-    private String accoundId3 = "account3";
+    private String accountId1 = "account1";
+    private String accountId2 = "account2";
+    private String accountId3 = "account3";
+
     @Before
-    public void setUp() throws Exception {
-        Account account = new Account(accoundId1,500, AccountType.SAVINGSACCOUNT);
-        accountRepository.save(account);
-        account = new Account(accoundId2,500, AccountType.CHECKACCOUNT);
-        accountRepository.save(account);
-        account = new Account(accoundId3,0, AccountType.SAVINGSACCOUNT);
-        accountRepository.save(account);
+    public void setUp() {
+        accountRepository.save(new Account(accountId1, 500, AccountType.SAVINGS));
+        accountRepository.save(new Account(accountId2, 500, AccountType.CHECK));
+        accountRepository.save(new Account(accountId3, 0, AccountType.SAVINGS));
 
-    }
-
-    @After
-    public void tearDown() throws Exception {
     }
 
     @Test
@@ -57,14 +50,13 @@ public class SavingsControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        Optional<Account> optionalAccount = accountRepository.findById(accoundId1);
-        if(optionalAccount.isPresent()) {
+        Optional<Account> optionalAccount = accountRepository.findById(accountId1);
+        if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
-            assertEquals(500*1.1,(double)account.getMoney());
-        }
-        else fail();
+            assertEquals(500 * 1.1, (double) account.getMoney());
+        } else fail();
 
-        assertEquals(500,(int)accountRepository.findById(accoundId2).get().getMoney());
-        assertEquals(0,(int)accountRepository.findById(accoundId3).get().getMoney());
+        assertEquals(500, (int) accountRepository.findById(accountId2).get().getMoney());
+        assertEquals(0, (int) accountRepository.findById(accountId3).get().getMoney());
     }
 }

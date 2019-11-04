@@ -56,8 +56,8 @@ public class TransactionControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        account1 = new Account(idAccount1, 300, AccountType.CHECKACCOUNT);
-        account2 = new Account(idAccount2, 300,AccountType.CHECKACCOUNT);
+        account1 = new Account(idAccount1, 300, AccountType.CHECK);
+        account2 = new Account(idAccount2, 300,AccountType.CHECK);
 
         accountRepository.save(account1);
         accountRepository.save(account2);

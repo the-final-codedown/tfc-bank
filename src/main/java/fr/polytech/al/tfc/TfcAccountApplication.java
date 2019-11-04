@@ -2,6 +2,7 @@ package fr.polytech.al.tfc;
 
 import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.AccountType;
+import fr.polytech.al.tfc.account.model.BankAccount;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -20,11 +21,13 @@ public class TfcAccountApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        Account account = new Account(300, AccountType.CHECKACCOUNT);
-        Account account1 = new Account(500, AccountType.CHECKACCOUNT);
-        Account account2 = new Account(1000, AccountType.CHECKACCOUNT);
-        accountRepository.save(account);
-        accountRepository.save(account1);
-        accountRepository.save(account2);
+        if (accountRepository.findAll().size() == 0) {
+            accountRepository.save(new Account(300, AccountType.CHECK));
+            accountRepository.save(new Account(500, AccountType.CHECK));
+            accountRepository.save(new Account(1000, AccountType.CHECK));
+        }
+        if (!accountRepository.existsById("bank")) {
+            accountRepository.save(new BankAccount());
+        }
     }
 }

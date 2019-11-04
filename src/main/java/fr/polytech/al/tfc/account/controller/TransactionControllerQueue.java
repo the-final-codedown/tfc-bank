@@ -1,7 +1,7 @@
 package fr.polytech.al.tfc.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.polytech.al.tfc.account.exception.NoExistingAccountException;
+import fr.polytech.al.tfc.account.exception.NonExistentAccountException;
 import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.Transaction;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
@@ -75,7 +75,7 @@ public class TransactionControllerQueue {
                     account.addPayment(transaction);
                     accountRepository.save(account);
                 } else {
-                    throw new NoExistingAccountException();
+                    throw new NonExistentAccountException();
                 }
             }
         } catch (KafkaException | IOException e) {
