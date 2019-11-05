@@ -27,35 +27,17 @@ import java.util.*;
 @Component
 public class TransactionControllerQueue {
 
-    private static final String app = "kafka-account";
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
     private KafkaConsumer<String, String> consumerTransaction;
 
     @Autowired
-    public TransactionControllerQueue(TransactionRepository transactionRepository, AccountRepository accountRepository, @Value("${kafkabroker}") String broker) {
-        String receivingTransactionQueue = "kafka-transaction";
-        this.consumerTransaction = subscribe(broker, receivingTransactionQueue);
+    public TransactionControllerQueue(TransactionRepository transactionRepository,
+                                      AccountRepository accountRepository,
+                                      KafkaConsumer<String,String> consumerTransaction) {
+        this.consumerTransaction = consumerTransaction;
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
-    }
-
-    public KafkaConsumer<String, String> subscribe(String kafkaBrokers, String receivingQueue) {
-
-        String topic = String.format("%s", receivingQueue);
-        String groupId = String.format("%s %s", receivingQueue, app);
-
-        Map<String, Object> config = new HashMap<>();
-        config.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, kafkaBrokers);
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-
-        StringDeserializer deserializer = new StringDeserializer();
-
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(config, deserializer, deserializer);
-        List<String> topics = new ArrayList<>();
-        topics.add(topic);
-        consumer.subscribe(topics);
-        return consumer;
     }
 
     @Scheduled(fixedDelay = 5000)
