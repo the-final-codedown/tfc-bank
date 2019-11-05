@@ -7,6 +7,7 @@ import lombok.NonNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -46,6 +47,13 @@ public class Transaction {
     }
 
     public void setDate(String date) {
-        this.date = LocalDateTime.parse(date, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        try {
+            this.date = LocalDateTime.parse(date, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        } catch (DateTimeException ignored) {
+            }
+        if (this.date == null) {
+            this.date = LocalDateTime.parse(date);
+        }
+
     }
 }
