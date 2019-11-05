@@ -43,7 +43,7 @@ public class Account {
         this.money = accountDTO.getMoney();
     }
 
-    public void addTransactionWindow(Transaction transactionWindow) {
+    private void addTransactionWindow(Transaction transactionWindow) {
         this.transactionsWindow.add(transactionWindow);
     }
 

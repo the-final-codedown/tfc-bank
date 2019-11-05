@@ -48,13 +48,13 @@ public class RollingHistoryObserverTest {
         Transaction transaction2 = new Transaction(idAccount1, idAccount2, 29, LocalDateTime.now().minusDays(7));
         Account account = new Account(idAccount1, 300, AccountType.CHECK);
 
-        account.addTransactionWindow(transaction1);
-        account.addTransactionWindow(transaction2);
+        account.processTransaction(transaction1, true);
+        account.processTransaction(transaction2, true);
         accountRepository.save(account);
 
         account = new Account(idAccount2, 300, AccountType.CHECK);
-        account.addTransactionWindow(transaction1);
-        account.addTransactionWindow(transaction2);
+        account.processTransaction(transaction1, false);
+        account.processTransaction(transaction2, false);
         accountRepository.save(account);
 
     }

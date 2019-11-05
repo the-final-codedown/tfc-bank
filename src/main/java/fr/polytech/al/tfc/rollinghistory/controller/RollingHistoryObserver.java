@@ -2,6 +2,7 @@ package fr.polytech.al.tfc.rollinghistory.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import fr.polytech.al.tfc.account.model.Account;
+import fr.polytech.al.tfc.account.model.Cap;
 import fr.polytech.al.tfc.account.model.Transaction;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
 import fr.polytech.al.tfc.rollinghistory.producer.RollingHistoryProducer;
@@ -54,6 +55,7 @@ public class RollingHistoryObserver {
                 for (Transaction transaction : removedTransactionsWindow) {
                     account.setAmountSlidingWindow(account.getAmountSlidingWindow() + transaction.getAmount());
                 }
+                rollingHistoryProducer.sendCap(account.getAccountId(), new Cap(account.getMoney(), account.getAmountSlidingWindow()));
                 transactions.removeAll(removedTransactionsWindow);
                 account.setTransactionsWindow(transactions);
                 accountRepository.save(account);

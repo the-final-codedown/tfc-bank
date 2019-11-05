@@ -35,10 +35,6 @@ public class TransactionController {
         if (optionalSourceAccount.isPresent() && optionalDestinationAccount.isPresent()) {
             transactionRepository.save(transaction);
 
-            // TODO needed?
-            Transaction oppositeTransaction = new Transaction(transaction);
-            transactionRepository.save(oppositeTransaction);
-
             Account sourceAccount = optionalSourceAccount.get();
             sourceAccount.processTransaction(transaction, true);
             accountRepository.save(sourceAccount);
