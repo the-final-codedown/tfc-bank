@@ -20,9 +20,8 @@ public class KafkaConfig {
     private static final String app = "kafka-account";
     @Bean
     public KafkaConsumer<String, String> consumer(@Value("${kafkabroker}") String kafkaBrokers){
-        String receivingQueue = "kafka-transaction";
-        String topic = String.format("%s", receivingQueue);
-        String groupId = String.format("%s %s", receivingQueue, app);
+
+        String groupId = String.format("%s", app);
 
         Map<String, Object> config = new HashMap<>();
         config.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, kafkaBrokers);
@@ -30,11 +29,7 @@ public class KafkaConfig {
 
         StringDeserializer deserializer = new StringDeserializer();
 
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(config, deserializer, deserializer);
-        List<String> topics = new ArrayList<>();
-        topics.add(topic);
-        consumer.subscribe(topics);
-        return consumer;
+        return new KafkaConsumer<>(config, deserializer, deserializer);
     }
     @Bean
     public KafkaProducer<String,String> producer(@Value("${kafkabroker}") String kafkaBrokers){

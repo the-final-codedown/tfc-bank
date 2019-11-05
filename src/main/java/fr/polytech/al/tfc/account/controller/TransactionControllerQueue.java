@@ -35,6 +35,11 @@ public class TransactionControllerQueue {
     public TransactionControllerQueue(TransactionRepository transactionRepository,
                                       AccountRepository accountRepository,
                                       KafkaConsumer<String,String> consumerTransaction) {
+        String receivingQueue = "kafka-transaction";
+        List<String> topics = new ArrayList<>();
+        String topic = String.format("%s", receivingQueue);
+        topics.add(topic);
+        consumerTransaction.subscribe(topics);
         this.consumerTransaction = consumerTransaction;
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
