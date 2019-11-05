@@ -58,7 +58,7 @@ public class Account {
     }
 
     public void processTransaction(Transaction transaction, boolean updateSlidingWindow) {
-        this.money -= transaction.getAmount();
+        this.setMoney(this.money -= transaction.getAmount());
         if (updateSlidingWindow) {
             this.amountSlidingWindow -= transaction.getAmount();
             this.addPayment(transaction);
