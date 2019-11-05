@@ -6,11 +6,19 @@ import fr.polytech.al.tfc.account.repository.TransactionRepository;
 import fr.polytech.al.tfc.profile.model.Profile;
 import fr.polytech.al.tfc.profile.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PreDestroy;
+import java.util.List;
 
-@Component
+@RestController
+@RequestMapping("/dump")
 public class PrettyDump {
 
     private ProfileRepository profileRepository;
@@ -22,20 +30,23 @@ public class PrettyDump {
         this.transactionRepository = transactionRepository;
     }
 
-    @PreDestroy
-    public void start(){
+    @GetMapping
+    public ResponseEntity<String> start(){
+        StringBuilder result = new StringBuilder();
         for(Profile p : profileRepository.findAll()){
-            System.out.println( p.getEmail());
+            result.append(p.getEmail()).append("\t").append(p.getAccounts().size()).append(" Accounts\n");
             for(Account account : p.getAccounts()){
-                System.out.println("id : " + account.getAccountId() + "\t Money :" + account.getMoney());
-                for(Transaction t : transactionRepository.findAllBySourceOrReceiver(account.getAccountId(),account.getAccountId())){
+                List<Transaction> transactions = transactionRepository.findAllBySourceOrReceiver(account.getAccountId(),account.getAccountId());
+                result.append("id : ").append(account.getAccountId()).append("\t Money : ").append(account.getMoney()).append("\t transaction : ").append(transactions.size()).append("\n");
+                for(Transaction t : transactions){
                     if(t.getSource().equals(account.getAccountId()))
-                        System.out.println("\tid : " + t.getId() + " +" + t.getAmount());
+                        result.append("\t id : ").append(t.getId()).append(" +").append(t.getAmount()).append("\n");
                     else
-                        System.out.println("\tid : " + t.getId() + " -" + t.getAmount());
+                        result.append("\t id : ").append(t.getId()).append(" -").append(t.getAmount()).append("\n");
                 }
 
             }
         }
+        return new ResponseEntity<>(result.toString(),HttpStatus.OK);
     }
 }

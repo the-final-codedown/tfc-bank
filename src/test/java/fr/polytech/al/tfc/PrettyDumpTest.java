@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 
@@ -31,6 +32,7 @@ public class PrettyDumpTest {
     private PrettyDump prettyDump;
 
 
+
     @Before
     public void setUp() throws Exception {
         String emailProfileAlice = "alice@alice.com";
@@ -38,23 +40,32 @@ public class PrettyDumpTest {
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setMoney(500);
         accountDTO.setAccountType(AccountType.CHECK);
-        String accountIdAlice = profileController.createAccountForProfile(emailProfileAlice,accountDTO).getBody().getAccountId();
+        String accountIdAlice1 = profileController.createAccountForProfile(emailProfileAlice,accountDTO).getBody().getAccountId();
+        accountDTO = new AccountDTO();
+        accountDTO.setMoney(500);
+        accountDTO.setAccountType(AccountType.CHECK);
+        String accountIdAlice2 = profileController.createAccountForProfile(emailProfileAlice,accountDTO).getBody().getAccountId();
+
 
         String emailProfileBob = "bob@bob.com";
         profileController.saveProfile(emailProfileBob);
         accountDTO = new AccountDTO();
         accountDTO.setMoney(500);
         accountDTO.setAccountType(AccountType.CHECK);
-        String accountIdBob = profileController.createAccountForProfile(emailProfileBob,accountDTO).getBody().getAccountId();
+        String accountIdBob1 = profileController.createAccountForProfile(emailProfileBob,accountDTO).getBody().getAccountId();
+        accountDTO = new AccountDTO();
+        accountDTO.setMoney(1000);
+        accountDTO.setAccountType(AccountType.CHECK);
+        String accountIdBob2 = profileController.createAccountForProfile(emailProfileBob,accountDTO).getBody().getAccountId();
 
-        transactionController.addTransaction(new Transaction(accountIdAlice,accountIdBob,100,LocalDateTime.now()));
-        transactionController.addTransaction(new Transaction(accountIdBob,accountIdAlice,100,LocalDateTime.now()));
-        transactionController.addTransaction(new Transaction(accountIdAlice,accountIdBob,100,LocalDateTime.now()));
-        transactionController.addTransaction(new Transaction(accountIdBob,accountIdAlice,100,LocalDateTime.now()));
+        transactionController.addTransaction(new Transaction(accountIdAlice1,accountIdBob1,100,LocalDateTime.now()));
+        transactionController.addTransaction(new Transaction(accountIdBob1,accountIdAlice1,100,LocalDateTime.now()));
+        transactionController.addTransaction(new Transaction(accountIdAlice1,accountIdBob2,100,LocalDateTime.now()));
+        transactionController.addTransaction(new Transaction(accountIdBob2,accountIdAlice1,100,LocalDateTime.now()));
     }
 
     @Test
     public void start() {
-        prettyDump.start();
+        System.out.println(prettyDump.start().getBody());
     }
 }
