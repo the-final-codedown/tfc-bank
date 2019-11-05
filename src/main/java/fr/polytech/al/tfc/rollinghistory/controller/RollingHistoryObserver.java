@@ -2,7 +2,6 @@ package fr.polytech.al.tfc.rollinghistory.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import fr.polytech.al.tfc.account.model.Account;
-import fr.polytech.al.tfc.account.model.Cap;
 import fr.polytech.al.tfc.account.model.Transaction;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
 import fr.polytech.al.tfc.rollinghistory.producer.RollingHistoryProducer;
@@ -35,6 +34,11 @@ public class RollingHistoryObserver {
         this.expirationTime = expirationTime;
     }
 
+    /**
+     * Replace IsKafkaEnable with mockedBean in test
+     *
+     * @throws JsonProcessingException
+     */
     @Scheduled(fixedDelay = 5000)
     public void processHistory() throws JsonProcessingException {
         //TODO improve efficiency of the algorithm
@@ -50,7 +54,6 @@ public class RollingHistoryObserver {
                 for (Transaction transaction : removedTransactionsWindow) {
                     account.setAmountSlidingWindow(account.getAmountSlidingWindow() + transaction.getAmount());
                 }
-                rollingHistoryProducer.sendCap(account.getAccountId(), new Cap(account.getMoney(), account.getAmountSlidingWindow()));
                 transactions.removeAll(removedTransactionsWindow);
                 account.setTransactionsWindow(transactions);
                 accountRepository.save(account);

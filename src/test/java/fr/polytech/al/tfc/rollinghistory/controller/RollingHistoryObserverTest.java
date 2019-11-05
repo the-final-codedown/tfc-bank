@@ -1,5 +1,6 @@
 package fr.polytech.al.tfc.rollinghistory.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.AccountType;
 import fr.polytech.al.tfc.account.model.Transaction;
@@ -36,18 +37,18 @@ public class RollingHistoryObserverTest {
         Transaction transaction2 = new Transaction(idAccount1, idAccount2, 29, LocalDateTime.now().minusDays(7));
         Account account = new Account(idAccount1, 300, AccountType.CHECK);
 
-        account.addPayment(transaction1);
-        account.addPayment(transaction2);
+        account.addTransactionWindow(transaction1);
+        account.addTransactionWindow(transaction2);
         accountRepository.save(account);
 
         account = new Account(idAccount2, 300, AccountType.CHECK);
-        account.addTransaction(transaction1);
-        account.addTransaction(transaction2);
+        account.addTransactionWindow(transaction1);
+        account.addTransactionWindow(transaction2);
         accountRepository.save(account);
     }
 
     @Test
-    public void processHistory() {
+    public void processHistory() throws JsonProcessingException {
         Optional<Account> account1 = accountRepository.findById(idAccount1);
         assertTrue(account1.isPresent());
         assertEquals(2, account1.get().getTransactionsWindow().size());
