@@ -1,6 +1,7 @@
 package fr.polytech.al.tfc.rollinghistory.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import fr.polytech.al.tfc.PrettyDump;
 import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.Cap;
 import fr.polytech.al.tfc.account.model.Transaction;

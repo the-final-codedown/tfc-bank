@@ -26,4 +26,6 @@ public class Profile {
     public void addAccount(Account account) {
         this.accounts.add(account);
     }
+
+
 }

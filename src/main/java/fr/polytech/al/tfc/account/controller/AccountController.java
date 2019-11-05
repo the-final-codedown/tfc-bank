@@ -22,13 +22,6 @@ public class AccountController {
         this.accountRepository = accountRepository;
     }
 
-    @PostMapping
-    public ResponseEntity<Account> saveAccount(@RequestBody AccountDTO accountDTO) {
-        Account account = new Account(accountDTO);
-        accountRepository.save(account);
-        return new ResponseEntity<>(account, HttpStatus.OK);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<Account> viewAccount(@PathVariable(value = "id") String id) {
         Optional<Account> account = accountRepository.findById(id);

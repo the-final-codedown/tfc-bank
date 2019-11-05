@@ -52,16 +52,8 @@ public class AccountControllerTest {
     //set up is testing saveAccount
     @Before
     public void setUp() throws Exception {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("money", 800);
-        jsonObject.addProperty("accountType", AccountType.CHECK.name());
-
-        MvcResult mvcResult = mockMvc.perform(post("/accounts")
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonObject.toString()))
-                .andExpect(status().isOk()).andReturn();
-        account = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Account.class);
+        account = new Account(800,AccountType.CHECK);
+        accountRepository.save(this.account);
     }
 
     @Test
