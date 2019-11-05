@@ -32,9 +32,9 @@ public class RollingHistoryProducer {
         this.producer = new KafkaProducer<>(props);
     }
 
-    public void sendCap(String account, Cap updatedCap) throws JsonProcessingException {
+    public void sendCap(String accountId, Cap updatedCap) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-        producer.send(new ProducerRecord<>(topic, account.getAccountId(), objectMapper.writeValueAsString(updatedCap)));
+        producer.send(new ProducerRecord<>(topic, accountId, objectMapper.writeValueAsString(updatedCap)));
         System.out.println("statistic sent by statisticService to fraudService");
         producer.flush();
         //producer.close();
