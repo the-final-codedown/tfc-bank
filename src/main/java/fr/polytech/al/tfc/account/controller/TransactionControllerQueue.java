@@ -1,7 +1,7 @@
 package fr.polytech.al.tfc.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fr.polytech.al.tfc.account.exception.NonExistentAccountException;
+import fr.polytech.al.tfc.account.exception.NoExistingAccountException;
 import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.Transaction;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
@@ -67,15 +67,21 @@ public class TransactionControllerQueue {
                 String key = record.key();
                 String value = record.value();
                 Transaction transaction = objectMapper.readValue(value, Transaction.class);
-                Optional<Account> optionalAccount = accountRepository.findById(transaction.getSource());
-                if (optionalAccount.isPresent()) {
+                Optional<Account> optionalSourceAccount = accountRepository.findById(transaction.getSource());
+                Optional<Account> optionalDestinationAccount = accountRepository.findById(transaction.getReceiver());
+                if (optionalSourceAccount.isPresent() && optionalDestinationAccount.isPresent()) {
                     transactionRepository.save(transaction);
-                    Account account = optionalAccount.get();
-                    account.setMoney(account.getMoney() - transaction.getAmount());
-                    account.addPayment(transaction);
-                    accountRepository.save(account);
+
+                    Account sourceAccount = optionalSourceAccount.get();
+                    sourceAccount.processTransaction(transaction, true);
+                    accountRepository.save(sourceAccount);
+
+                    Account destinationAccount = optionalDestinationAccount.get();
+                    destinationAccount.processTransaction(transaction, false);
+                    accountRepository.save(destinationAccount);
+
                 } else {
-                    throw new NonExistentAccountException();
+                    throw new NoExistingAccountException();
                 }
             }
         } catch (KafkaException | IOException e) {

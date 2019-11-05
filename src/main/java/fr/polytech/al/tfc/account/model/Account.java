@@ -31,7 +31,6 @@ public class Account {
      * One week window
      */
     private List<Transaction> transactionsWindow = new ArrayList<>();
-    private List<Transaction> transactions = new ArrayList<>();
 
     public Account(String accountId, @NonNull Integer money, AccountType accountType) {
         this.accountType = accountType;
@@ -48,22 +47,11 @@ public class Account {
         this.transactionsWindow.add(transactionWindow);
     }
 
-    public void addTransaction(Transaction transaction) {
-        this.transactions.add(transaction);
-    }
-
-    public void addPayment(Transaction transaction) {
-        addTransaction(transaction);
-        addTransactionWindow(transaction);
-    }
-
     public void processTransaction(Transaction transaction, boolean updateSlidingWindow) {
         this.setMoney(this.money -= transaction.getAmount());
         if (updateSlidingWindow) {
             this.amountSlidingWindow -= transaction.getAmount();
-            this.addPayment(transaction);
-        } else {
-            this.addTransaction(transaction);
+            this.addTransactionWindow(transaction);
         }
     }
 

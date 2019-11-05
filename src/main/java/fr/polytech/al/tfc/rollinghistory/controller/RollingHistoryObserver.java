@@ -1,9 +1,11 @@
 package fr.polytech.al.tfc.rollinghistory.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import fr.polytech.al.tfc.account.model.Account;
+import fr.polytech.al.tfc.account.model.Cap;
 import fr.polytech.al.tfc.account.model.Transaction;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
-import fr.polytech.al.tfc.account.repository.TransactionRepository;
+import fr.polytech.al.tfc.rollinghistory.producer.RollingHistoryProducer;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -15,13 +17,13 @@ import java.util.stream.Collectors;
 @EnableScheduling
 @Component
 public class RollingHistoryObserver {
-    
-    private final TransactionRepository transactionRepository;
+
+    private final RollingHistoryProducer rollingHistoryProducer;
     private final AccountRepository accountRepository;
     private int expirationTime = 604800; // Represents 7 days in seconds
 
-    public RollingHistoryObserver(TransactionRepository transactionRepository, AccountRepository accountRepository) {
-        this.transactionRepository = transactionRepository;
+    public RollingHistoryObserver(RollingHistoryProducer rollingHistoryProducer, AccountRepository accountRepository) {
+        this.rollingHistoryProducer = rollingHistoryProducer;
         this.accountRepository = accountRepository;
     }
 
@@ -34,7 +36,7 @@ public class RollingHistoryObserver {
     }
 
     @Scheduled(fixedDelay = 5000)
-    public void processHistory() {
+    public void processHistory() throws JsonProcessingException {
         //TODO improve efficiency of the algorithm
         List<Account> accounts = accountRepository.findAll();
         for (Account account : accounts) {
@@ -48,12 +50,11 @@ public class RollingHistoryObserver {
                 for (Transaction transaction : removedTransactionsWindow) {
                     account.setAmountSlidingWindow(account.getAmountSlidingWindow() + transaction.getAmount());
                 }
+                rollingHistoryProducer.sendCap(account.getAccountId(), new Cap(account.getMoney(), account.getAmountSlidingWindow()));
                 transactions.removeAll(removedTransactionsWindow);
                 account.setTransactionsWindow(transactions);
                 accountRepository.save(account);
             }
         }
-
     }
-
 }
