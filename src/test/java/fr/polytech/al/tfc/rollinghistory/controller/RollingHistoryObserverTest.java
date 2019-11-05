@@ -5,11 +5,14 @@ import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.AccountType;
 import fr.polytech.al.tfc.account.model.Transaction;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
@@ -17,6 +20,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -24,6 +28,11 @@ public class RollingHistoryObserverTest {
 
     private String idAccount1 = "idAccount1";
     private String idAccount2 = "idAccount2";
+
+    @MockBean
+    KafkaConsumer<String,String> kafkaConsumer;
+    @MockBean
+    KafkaProducer<String,String> kafkaProducer;
 
     @Autowired
     private RollingHistoryObserver rollingHistoryController;
@@ -33,6 +42,8 @@ public class RollingHistoryObserverTest {
 
     @Before
     public void setUp() {
+        kafkaConsumer = mock(KafkaConsumer.class);
+        kafkaProducer = mock(KafkaProducer.class);
         Transaction transaction1 = new Transaction(idAccount1, idAccount2, 29, LocalDateTime.now());
         Transaction transaction2 = new Transaction(idAccount1, idAccount2, 29, LocalDateTime.now().minusDays(7));
         Account account = new Account(idAccount1, 300, AccountType.CHECK);
@@ -45,6 +56,7 @@ public class RollingHistoryObserverTest {
         account.addTransactionWindow(transaction1);
         account.addTransactionWindow(transaction2);
         accountRepository.save(account);
+
     }
 
     @Test

@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @Document
@@ -45,6 +46,6 @@ public class Transaction {
     }
 
     public void setDate(String date) {
-        this.date = LocalDateTime.parse(date);
+        this.date = LocalDateTime.parse(date, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
 }
