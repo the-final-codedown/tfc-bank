@@ -5,6 +5,7 @@ import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.Cap;
 import fr.polytech.al.tfc.account.model.Transaction;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
+import fr.polytech.al.tfc.account.repository.TransactionRepository;
 import fr.polytech.al.tfc.rollinghistory.producer.RollingHistoryProducer;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @EnableScheduling
 @Component
@@ -20,41 +20,28 @@ public class RollingHistoryObserver {
 
     private final RollingHistoryProducer rollingHistoryProducer;
     private final AccountRepository accountRepository;
-    private int expirationTime = 604800; // Represents 7 days in seconds
+    private final TransactionRepository transactionRepository;
 
-    public RollingHistoryObserver(RollingHistoryProducer rollingHistoryProducer, AccountRepository accountRepository) {
+    public RollingHistoryObserver(RollingHistoryProducer rollingHistoryProducer, AccountRepository accountRepository, TransactionRepository transactionRepository) {
         this.rollingHistoryProducer = rollingHistoryProducer;
         this.accountRepository = accountRepository;
-    }
-
-    public int getExpirationTime() {
-        return expirationTime;
-    }
-
-    public void setExpirationTime(int expirationTime) {
-        this.expirationTime = expirationTime;
+        this.transactionRepository = transactionRepository;
     }
 
     @Scheduled(fixedDelay = 5000)
     public void processHistory() throws JsonProcessingException {
-        System.out.println("history processed");
-        //TODO improve efficiency of the algorithm
+        System.out.println("Processing history");
         List<Account> accounts = accountRepository.findAll();
         for (Account account : accounts) {
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime then = now.minusSeconds(expirationTime);
-            List<Transaction> transactions = account.getTransactionsWindow();
-            if (!transactions.isEmpty()) {
-                List<Transaction> removedTransactionsWindow = transactions.stream()
-                        .filter(transaction -> transaction.getDate().isBefore(then))
-                        .collect(Collectors.toList());
-                for (Transaction transaction : removedTransactionsWindow) {
-                    account.setAmountSlidingWindow(account.getAmountSlidingWindow() + transaction.getAmount());
-                }
-                rollingHistoryProducer.sendCap(account.getAccountId(), new Cap(account.getMoney(), account.getAmountSlidingWindow()));
-                transactions.removeAll(removedTransactionsWindow);
-                account.setTransactionsWindow(transactions);
+            List<Transaction> window = transactionRepository.findAllBySourceAndDateAfter(account.getAccountId(), LocalDateTime.now().minusDays(7));
+            Integer windowAmount = window.stream()
+                    .map(Transaction::getAmount)
+                    .reduce(0, Integer::sum);
+            if (!windowAmount.equals(account.getLastWindow())) {
+                System.out.println("Updating sliding window : " + windowAmount);
+                account.setLastWindow(windowAmount);
                 accountRepository.save(account);
+                rollingHistoryProducer.sendCap(account.getAccountId(), new Cap(account.getMoney(), account.getAmountSlidingWindow() - account.getLastWindow()));
             }
         }
     }

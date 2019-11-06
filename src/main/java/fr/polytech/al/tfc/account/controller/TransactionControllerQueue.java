@@ -32,7 +32,7 @@ public class TransactionControllerQueue {
     @Autowired
     public TransactionControllerQueue(TransactionRepository transactionRepository,
                                       AccountRepository accountRepository,
-                                      KafkaConsumer<String,String> consumerTransaction) {
+                                      KafkaConsumer<String, String> consumerTransaction) {
         String receivingQueue = "kafka-transaction";
         List<String> topics = new ArrayList<>();
         String topic = String.format("%s", receivingQueue);
@@ -46,7 +46,6 @@ public class TransactionControllerQueue {
     @Scheduled(fixedDelay = 5000)
     public void listenTransaction() {
         try {
-            System.out.println("listen to get transactions");
             ConsumerRecords<String, String> records = consumerTransaction.poll(Duration.ofSeconds(1));
             ObjectMapper objectMapper = new ObjectMapper();
             for (ConsumerRecord<String, String> record : records) {
@@ -59,11 +58,11 @@ public class TransactionControllerQueue {
                     transactionRepository.save(transaction);
 
                     Account sourceAccount = optionalSourceAccount.get();
-                    sourceAccount.processTransaction(transaction, true);
+                    sourceAccount.processTransaction(transaction);
                     accountRepository.save(sourceAccount);
 
                     Account destinationAccount = optionalDestinationAccount.get();
-                    destinationAccount.processTransaction(transaction, false);
+                    destinationAccount.processTransaction(transaction);
                     accountRepository.save(destinationAccount);
 
                 } else {

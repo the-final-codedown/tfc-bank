@@ -36,11 +36,11 @@ public class TransactionController {
             transactionRepository.save(transaction);
 
             Account sourceAccount = optionalSourceAccount.get();
-            sourceAccount.processTransaction(transaction, true);
+            sourceAccount.processTransaction(transaction);
             accountRepository.save(sourceAccount);
 
             Account destinationAccount = optionalDestinationAccount.get();
-            destinationAccount.processTransaction(transaction, false);
+            destinationAccount.processTransaction(transaction);
             accountRepository.save(destinationAccount);
 
             return new ResponseEntity<>(transaction, HttpStatus.OK);

@@ -1,13 +1,11 @@
 package fr.polytech.al.tfc.account.model;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
+@ToString
 public class Cap {
 
     @NonNull

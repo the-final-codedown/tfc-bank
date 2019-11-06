@@ -7,14 +7,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Document
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class Account {
+
+    private static final Integer amountSlidingWindow = 300;
 
     @Id
     private String accountId;
@@ -22,15 +21,10 @@ public class Account {
     @NonNull
     private Integer money;
 
-    private Integer amountSlidingWindow = 300;
+    private Integer lastWindow = 0;
 
     @NonNull
     private AccountType accountType;
-
-    /**
-     * One week window
-     */
-    private List<Transaction> transactionsWindow = new ArrayList<>();
 
     public Account(String accountId, @NonNull Integer money, AccountType accountType) {
         this.accountType = accountType;
@@ -43,16 +37,12 @@ public class Account {
         this.money = accountDTO.getMoney();
     }
 
-    private void addTransactionWindow(Transaction transactionWindow) {
-        this.transactionsWindow.add(transactionWindow);
+    public Integer getAmountSlidingWindow() {
+        return amountSlidingWindow;
     }
 
-    public void processTransaction(Transaction transaction, boolean updateSlidingWindow) {
+    public void processTransaction(Transaction transaction) {
         this.setMoney(this.money -= transaction.getAmount());
-        if (updateSlidingWindow) {
-            this.amountSlidingWindow -= transaction.getAmount();
-            this.addTransactionWindow(transaction);
-        }
     }
 
 }
