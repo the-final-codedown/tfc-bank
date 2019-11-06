@@ -10,8 +10,6 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -44,7 +42,6 @@ public class TransactionMockSender {
         this.accountRepository = accountRepository;
     }
 
-    //@Scheduled(fixedDelay = 5000)
     public void addTransactionIntoAccounts() throws JsonProcessingException {
         List<Account> accounts = giveRandomAccount(accountRepository.findAll());
         Account account1 = accounts.get(0);

@@ -1,7 +1,6 @@
 package fr.polytech.al.tfc.rollinghistory.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import fr.polytech.al.tfc.PrettyDump;
 import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.Cap;
 import fr.polytech.al.tfc.account.model.Transaction;
@@ -36,13 +35,9 @@ public class RollingHistoryObserver {
         this.expirationTime = expirationTime;
     }
 
-    /**
-     * Replace IsKafkaEnable with mockedBean in test
-     *
-     * @throws JsonProcessingException
-     */
     @Scheduled(fixedDelay = 5000)
     public void processHistory() throws JsonProcessingException {
+        System.out.println("history processed");
         //TODO improve efficiency of the algorithm
         List<Account> accounts = accountRepository.findAll();
         for (Account account : accounts) {

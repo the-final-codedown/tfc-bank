@@ -52,7 +52,7 @@ public class Transaction {
         } catch (DateTimeException ignored) {
             }
         if (this.date == null) {
-            this.date = LocalDateTime.parse(date);
+            this.date = LocalDateTime.now();
         }
 
     }

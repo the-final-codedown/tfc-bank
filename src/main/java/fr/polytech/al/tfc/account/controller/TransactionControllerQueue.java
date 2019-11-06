@@ -6,22 +6,20 @@ import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.Transaction;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
 import fr.polytech.al.tfc.account.repository.TransactionRepository;
-import org.apache.kafka.clients.CommonClientConfigs;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.KafkaException;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @EnableScheduling
 @Component
@@ -48,6 +46,7 @@ public class TransactionControllerQueue {
     @Scheduled(fixedDelay = 5000)
     public void listenTransaction() {
         try {
+            System.out.println("listen to get transactions");
             ConsumerRecords<String, String> records = consumerTransaction.poll(Duration.ofSeconds(1));
             ObjectMapper objectMapper = new ObjectMapper();
             for (ConsumerRecord<String, String> record : records) {
