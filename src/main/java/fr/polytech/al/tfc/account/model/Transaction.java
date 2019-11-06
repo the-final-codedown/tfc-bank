@@ -54,6 +54,5 @@ public class Transaction {
         if (this.date == null) {
             this.date = LocalDateTime.now();
         }
-
     }
 }
