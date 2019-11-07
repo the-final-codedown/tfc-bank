@@ -1,6 +1,7 @@
 package fr.polytech.al.tfc.account.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.polytech.al.tfc.account.business.TransactionBusiness;
 import fr.polytech.al.tfc.account.exception.NonExistentAccountException;
 import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.Transaction;
@@ -27,20 +28,23 @@ public class TransactionControllerQueue {
 
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
+    private final TransactionBusiness transactionBusiness;
     private KafkaConsumer<String, String> consumerTransaction;
 
     @Autowired
     public TransactionControllerQueue(TransactionRepository transactionRepository,
                                       AccountRepository accountRepository,
-                                      KafkaConsumer<String, String> consumerTransaction) {
+                                      KafkaConsumer<String, String> consumerTransaction, TransactionBusiness transactionBusiness) {
+        this.transactionBusiness = transactionBusiness;
+        this.consumerTransaction = consumerTransaction;
+        this.transactionRepository = transactionRepository;
+        this.accountRepository = accountRepository;
+
         String receivingQueue = "kafka-transaction";
         List<String> topics = new ArrayList<>();
         String topic = String.format("%s", receivingQueue);
         topics.add(topic);
         consumerTransaction.subscribe(topics);
-        this.consumerTransaction = consumerTransaction;
-        this.transactionRepository = transactionRepository;
-        this.accountRepository = accountRepository;
     }
 
     @Scheduled(fixedDelay = 5000)
@@ -55,16 +59,7 @@ public class TransactionControllerQueue {
                 Optional<Account> optionalSourceAccount = accountRepository.findById(transaction.getSource());
                 Optional<Account> optionalDestinationAccount = accountRepository.findById(transaction.getReceiver());
                 if (optionalSourceAccount.isPresent() && optionalDestinationAccount.isPresent()) {
-                    transactionRepository.save(transaction);
-
-                    Account sourceAccount = optionalSourceAccount.get();
-                    sourceAccount.processTransaction(transaction);
-                    accountRepository.save(sourceAccount);
-
-                    Account destinationAccount = optionalDestinationAccount.get();
-                    destinationAccount.processTransaction(transaction);
-                    accountRepository.save(destinationAccount);
-
+                    transactionBusiness.processTransaction(transaction, optionalSourceAccount.get(), optionalDestinationAccount.get());
                 } else {
                     throw new NonExistentAccountException();
                 }

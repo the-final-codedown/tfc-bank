@@ -1,10 +1,9 @@
 package fr.polytech.al.tfc.account.controller;
 
+import fr.polytech.al.tfc.account.business.TransactionBusiness;
 import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.Transaction;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
-import fr.polytech.al.tfc.account.repository.TransactionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,14 +17,13 @@ import java.util.Optional;
 @RequestMapping("/transactions")
 public class TransactionController {
 
-    private final TransactionRepository transactionRepository;
-
     private final AccountRepository accountRepository;
 
-    @Autowired // TODO search if optional ?
-    public TransactionController(TransactionRepository transactionRepository, AccountRepository accountRepository) {
-        this.transactionRepository = transactionRepository;
+    private final TransactionBusiness transactionBusiness;
+
+    public TransactionController(AccountRepository accountRepository, TransactionBusiness transactionBusiness) {
         this.accountRepository = accountRepository;
+        this.transactionBusiness = transactionBusiness;
     }
 
     @PostMapping
@@ -33,16 +31,7 @@ public class TransactionController {
         Optional<Account> optionalSourceAccount = accountRepository.findById(transaction.getSource());
         Optional<Account> optionalDestinationAccount = accountRepository.findById(transaction.getReceiver());
         if (optionalSourceAccount.isPresent() && optionalDestinationAccount.isPresent()) {
-            transactionRepository.save(transaction);
-
-            Account sourceAccount = optionalSourceAccount.get();
-            sourceAccount.processTransaction(transaction);
-            accountRepository.save(sourceAccount);
-
-            Account destinationAccount = optionalDestinationAccount.get();
-            destinationAccount.processTransaction(transaction);
-            accountRepository.save(destinationAccount);
-
+            transactionBusiness.processTransaction(transaction, optionalSourceAccount.get(), optionalDestinationAccount.get());
             return new ResponseEntity<>(transaction, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

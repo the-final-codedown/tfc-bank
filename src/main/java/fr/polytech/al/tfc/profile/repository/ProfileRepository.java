@@ -9,5 +9,7 @@ import java.util.Optional;
 @Repository("tfc.profile")
 public interface ProfileRepository extends MongoRepository<Profile, String> {
 
-    Optional<Profile> findProfileByEmail(String email);
+    Optional<Profile> findByEmail(String email);
+
+    boolean existsByEmail(String email);
 }

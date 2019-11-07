@@ -1,6 +1,5 @@
 package fr.polytech.al.tfc.profile.model;
 
-import fr.polytech.al.tfc.account.model.Account;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -21,11 +20,10 @@ public class Profile {
     @NonNull
     private String email;
 
-    private List<Account> accounts = new ArrayList<>();
+    private List<String> accounts = new ArrayList<>();
 
-    public void addAccount(Account account) {
-        this.accounts.add(account);
+    public void addAccount(String accountId) {
+        this.accounts.add(accountId);
     }
-
 
 }

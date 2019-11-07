@@ -8,6 +8,7 @@ import fr.polytech.al.tfc.account.repository.TransactionRepository;
 import fr.polytech.al.tfc.profile.controller.ProfileController;
 import fr.polytech.al.tfc.profile.repository.ProfileRepository;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@Ignore
 public class PrettyDumpTest {
 
     @Autowired

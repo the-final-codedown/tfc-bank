@@ -41,7 +41,6 @@ public class SavingsControllerTest {
         accountRepository.save(new Account(accountId1, 500, AccountType.SAVINGS));
         accountRepository.save(new Account(accountId2, 500, AccountType.CHECK));
         accountRepository.save(new Account(accountId3, 0, AccountType.SAVINGS));
-
     }
 
     @Test

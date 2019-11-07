@@ -1,9 +1,6 @@
 package fr.polytech.al.tfc.account.model;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -13,7 +10,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @RequiredArgsConstructor
 public class Account {
 
-    private static final Integer amountSlidingWindow = 300;
+    @Setter(AccessLevel.NONE)
+    protected Integer amountSlidingWindow = 300;
 
     @Id
     private String accountId;
@@ -41,8 +39,10 @@ public class Account {
         return amountSlidingWindow;
     }
 
-    public void processTransaction(Transaction transaction) {
-        this.setMoney(this.money -= transaction.getAmount());
+    public void processTransaction(Transaction transaction, boolean source) {
+        if (!"bank".equals(this.accountId)) {
+            this.setMoney(this.money += source ? -transaction.getAmount() : transaction.getAmount());
+        }
     }
 
 }

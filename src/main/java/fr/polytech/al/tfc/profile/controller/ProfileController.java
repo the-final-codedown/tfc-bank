@@ -3,6 +3,7 @@ package fr.polytech.al.tfc.profile.controller;
 import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.AccountDTO;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
+import fr.polytech.al.tfc.profile.business.ProfileBusiness;
 import fr.polytech.al.tfc.profile.model.Profile;
 import fr.polytech.al.tfc.profile.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +21,18 @@ public class ProfileController {
 
     private final AccountRepository accountRepository;
 
+    private final ProfileBusiness profileBusiness;
+
     @Autowired
-    public ProfileController(ProfileRepository profileRepository, AccountRepository accountRepository) {
+    public ProfileController(ProfileRepository profileRepository, AccountRepository accountRepository, ProfileBusiness profileBusiness) {
         this.profileRepository = profileRepository;
         this.accountRepository = accountRepository;
+        this.profileBusiness = profileBusiness;
     }
 
     @GetMapping("/{email}")
     public ResponseEntity<Profile> getProfileByEmail(@PathVariable(value = "email") String email) {
-        Optional<Profile> profile = profileRepository.findProfileByEmail(email);
+        Optional<Profile> profile = profileRepository.findByEmail(email);
         return profile
                 .map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -43,12 +47,10 @@ public class ProfileController {
 
     @PostMapping("/{email}/accounts")
     public ResponseEntity<Account> createAccountForProfile(@PathVariable(value = "email") String email, @RequestBody AccountDTO accountDTO) {
-        Account account = new Account(accountDTO);
-        accountRepository.save(account);
-        Optional<Profile> profile = profileRepository.findProfileByEmail(email);
-        if (profile.isPresent()) {
-            profile.get().addAccount(account);
-            profileRepository.save(profile.get());
+        Optional<Profile> optionalProfile = profileRepository.findByEmail(email);
+        if (optionalProfile.isPresent()) {
+            Account account = new Account(accountDTO);
+            profileBusiness.saveProfileWithAccount(optionalProfile.get(), account);
             return new ResponseEntity<>(account, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -4,6 +4,7 @@ import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.AccountType;
 import fr.polytech.al.tfc.account.model.BankAccount;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
+import fr.polytech.al.tfc.profile.business.ProfileBusiness;
 import fr.polytech.al.tfc.profile.model.Profile;
 import fr.polytech.al.tfc.profile.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,12 @@ public class TfcAccountApplication implements CommandLineRunner {
 
     @Autowired
     private AccountRepository accountRepository;
+
     @Autowired
     private ProfileRepository profileRepository;
+
+    @Autowired
+    private ProfileBusiness profileBusiness;
 
     public static void main(String[] args) {
         SpringApplication.run(TfcAccountApplication.class, args);
@@ -25,37 +30,22 @@ public class TfcAccountApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        String emailMat = "mathieu@email";
-        String emailFlo = "florian@email";
-        String emailVeg = "theos@email";
-        String emailGreg = "gregoire@email";
-        if (profileRepository.findAll().isEmpty()) {
-            Profile mathieu = new Profile(emailMat);
-            Profile florian = new Profile(emailFlo);
-            Profile theos = new Profile(emailVeg);
-            Profile gregoire = new Profile(emailGreg);
-            if (accountRepository.findAll().isEmpty()) {
-                Account accountMat = new Account(300, AccountType.CHECK);
-                Account accountFlo = new Account(500, AccountType.CHECK);
-                Account accountGregoire = new Account(1000, AccountType.CHECK);
-                Account accountTheos = new Account(10000, AccountType.CHECK);
-                mathieu.addAccount(accountMat);
-                gregoire.addAccount(accountGregoire);
-                theos.addAccount(accountTheos);
-                florian.addAccount(accountFlo);
-                accountRepository.save(accountTheos);
-                accountRepository.save(accountGregoire);
-                accountRepository.save(accountFlo);
-                accountRepository.save(accountMat);
+        if (profileRepository.findAll().isEmpty() && accountRepository.findAll().isEmpty()) {
+            createAccount("mathieu@email", 300);
+            createAccount("florian@email", 500);
+            createAccount("theos@email", 1000);
+            createAccount("gregoire@email", 10000);
+        }
+        if (!profileRepository.existsById("bank") && !accountRepository.existsById("bank")) {
+            Profile bank = new Profile("bank");
+            Account bankAccount = new BankAccount();
+            accountRepository.save(bankAccount);
+            bank.addAccount(bankAccount.getAccountId());
+            profileRepository.save(bank);
+        }
+    }
 
-                profileRepository.save(theos);
-                profileRepository.save(mathieu);
-                profileRepository.save(gregoire);
-                profileRepository.save(florian);
-            }
-        }
-        if (!accountRepository.existsById("bank")) {
-            accountRepository.save(new BankAccount());
-        }
+    private void createAccount(String email, int amount) {
+        profileBusiness.saveProfileWithAccount(new Profile(email), new Account(amount, AccountType.CHECK));
     }
 }

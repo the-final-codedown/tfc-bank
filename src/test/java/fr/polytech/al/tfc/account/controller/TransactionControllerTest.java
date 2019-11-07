@@ -14,55 +14,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 public class TransactionControllerTest {
 
-    @Autowired
-    private TransactionController transactionController;
+    private final String idAccount1 = "idAccount1";
+    private final String idAccount2 = "idAccount2";
+
     @Autowired
     private AccountRepository accountRepository;
+
     @Autowired
     private TransactionRepository transactionRepository;
 
     @Autowired
     private MockMvc mockMvc;
-
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    private final String idAccount1 = "idAccount1";
     private Account account1;
-    private final String idAccount2 = "idAccount2";
     private Account account2;
 
-    @Test
-    @DirtiesContext
-    public void contextLoads() {
-        this.mockMvc = MockMvcBuilders.standaloneSetup(transactionController).build();
-    }
-
     @Before
-    public void setUp() throws Exception {
-        account1 = new Account(idAccount1, 300, AccountType.CHECK);
-        account2 = new Account(idAccount2, 300, AccountType.CHECK);
-
-        accountRepository.save(account1);
-        accountRepository.save(account2);
+    public void setUp() {
+        account1 = accountRepository.save(new Account(idAccount1, 300, AccountType.CHECK));
+        account2 = accountRepository.save(new Account(idAccount2, 300, AccountType.CHECK));
     }
 
     @Test
@@ -74,14 +61,19 @@ public class TransactionControllerTest {
         transactionJsonObject.addProperty("receiver", idAccount2);
         transactionJsonObject.addProperty("amount", transactionAmount);
         transactionJsonObject.addProperty("date", transactionDate.toString());
-        MvcResult mvcResult = mockMvc.perform(post("/transactions")
+
+        String result = mockMvc.perform(MockMvcRequestBuilders.post("/transactions")
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(transactionJsonObject.toString()))
-                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print())
-                .andReturn();
-        Transaction transaction = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Transaction.class);
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        Transaction transaction = objectMapper.readValue(result, Transaction.class);
+
         assertEquals(idAccount2, transaction.getReceiver());
         assertEquals(idAccount1, transaction.getSource());
         assertEquals(transactionDate, transaction.getDate());

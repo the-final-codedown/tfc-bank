@@ -57,7 +57,7 @@ public class ProfileControllerTest {
                 .content(emailTest))
                 .andExpect(status().isOk());
 
-        assertEquals(profile, profileRepository.findProfileByEmail(emailTest).get());
+        assertEquals(profile, profileRepository.findByEmail(emailTest).get());
     }
 
     @Test
@@ -76,7 +76,7 @@ public class ProfileControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonObject.toString()))
                 .andExpect(status().isOk());
-        profile = profileRepository.findProfileByEmail(emailTest).get();
+        profile = profileRepository.findByEmail(emailTest).get();
         assertEquals(1, profile.getAccounts().size());
     }
 }
