@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>fr.polytech.al.tfc</groupId>
-    <artifactId>tfc-profile</artifactId>
+    <artifactId>tfc-bank</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>profile</name>
+    <name>bank</name>
     <description>Demo project for Spring Boot</description>
     <properties>
         <kafka.version>2.3.0</kafka.version>
