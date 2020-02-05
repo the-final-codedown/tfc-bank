@@ -30,6 +30,7 @@ public class TfcAccountApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        /*
         if (profileRepository.findAll().isEmpty() && accountRepository.findAll().isEmpty()) {
             createAccount("mathieu@email", 300);
             createAccount("florian@email", 500);
@@ -43,6 +44,7 @@ public class TfcAccountApplication implements CommandLineRunner {
             bank.addAccount(bankAccount.getAccountId());
             profileRepository.save(bank);
         }
+        */
     }
 
     private void createAccount(String email, int amount) {
