@@ -2,4 +2,4 @@
 
 mvn clean package
 
-docker build -t tfc/app .
+docker build -t tfc/tfc-bank .
