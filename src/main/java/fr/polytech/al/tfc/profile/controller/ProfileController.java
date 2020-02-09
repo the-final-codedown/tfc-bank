@@ -5,6 +5,7 @@ import fr.polytech.al.tfc.account.model.AccountDTO;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
 import fr.polytech.al.tfc.profile.business.ProfileBusiness;
 import fr.polytech.al.tfc.profile.model.Profile;
+import fr.polytech.al.tfc.profile.model.ProfileDTO;
 import fr.polytech.al.tfc.profile.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,8 +40,8 @@ public class ProfileController {
     }
 
     @PostMapping
-    public ResponseEntity<Profile> saveProfile(@RequestBody String email) {
-        Profile profile = new Profile(email);
+    public ResponseEntity<Profile> saveProfile(@RequestBody ProfileDTO profileDTO) {
+        Profile profile = new Profile(profileDTO.getEmail());
         profileRepository.save(profile);
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }
