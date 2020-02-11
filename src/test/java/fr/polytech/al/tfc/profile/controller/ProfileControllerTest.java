@@ -51,10 +51,13 @@ public class ProfileControllerTest {
     @Test
     public void saveProfile() throws Exception {
         final String emailTest = "saveProfile";
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("email", emailTest);
         Profile profile = new Profile(emailTest);
         mockMvc.perform(post("/profiles")
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .content(emailTest))
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .content(jsonObject.toString()))
                 .andExpect(status().isOk());
 
         assertEquals(profile, profileRepository.findByEmail(emailTest).get());

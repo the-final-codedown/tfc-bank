@@ -7,6 +7,7 @@ import fr.polytech.al.tfc.account.model.Account;
 import fr.polytech.al.tfc.account.model.AccountType;
 import fr.polytech.al.tfc.account.model.Transaction;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
+import fr.polytech.al.tfc.rollinghistory.producer.RollingHistoryProducer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,14 +26,11 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest
 public class RollingHistoryObserverTest {
 
-
-    @MockBean
-    private TransactionControllerQueue transactionControllerQueue;
-
     private String idAccount1 = "idAccount1";
     private String idAccount2 = "idAccount2";
+
     @Autowired
-    private RollingHistoryObserver rollingHistoryController;
+    private RollingHistoryProducer rollingHistoryProducer;
 
     @Autowired
     private AccountRepository accountRepository;
@@ -43,6 +41,8 @@ public class RollingHistoryObserverTest {
 
     @Before
     public void setUp() {
+
+        rollingHistoryProducer.setTopic("kafka-test");
         accountRepository.save(new Account(idAccount1, 300, AccountType.CHECK));
         accountRepository.save(new Account(idAccount2, 300, AccountType.CHECK));
 
@@ -54,13 +54,14 @@ public class RollingHistoryObserverTest {
     }
 
     @Test
-    public void processHistory() throws JsonProcessingException {
+    public void processHistory() throws JsonProcessingException, InterruptedException {
         Optional<Account> account1 = accountRepository.findById(idAccount1);
         assertTrue(account1.isPresent());
 
         assertEquals(0, (int) account1.get().getLastWindow());
 
-        rollingHistoryController.processHistory();
+        System.out.println("Waiting 5 secondes...");
+        Thread.sleep(5000);
 
         account1 = accountRepository.findById(idAccount1);
         assertTrue(account1.isPresent());
