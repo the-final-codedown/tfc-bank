@@ -5,12 +5,14 @@ import fr.polytech.al.tfc.account.model.AccountDTO;
 import fr.polytech.al.tfc.account.model.AccountType;
 import fr.polytech.al.tfc.account.model.Cap;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
+import fr.polytech.al.tfc.profile.model.Profile;
+import fr.polytech.al.tfc.profile.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import fr.polytech.al.tfc.profile.business.ProfileBusiness;
 
-import javax.security.auth.login.AccountNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,10 +21,14 @@ import java.util.Optional;
 public class AccountController {
 
     private final AccountRepository accountRepository;
+    private final ProfileRepository profileRepository;
+    private final ProfileBusiness profileBusiness;
 
     @Autowired
-    public AccountController(AccountRepository accountRepository) {
+    public AccountController(AccountRepository accountRepository, ProfileRepository profileRepository, ProfileBusiness profileBusiness) {
         this.accountRepository = accountRepository;
+        this.profileRepository = profileRepository;
+        this.profileBusiness = profileBusiness;
     }
 
 
@@ -49,4 +55,14 @@ public class AccountController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @PostMapping("/{email}/accounts")
+    public ResponseEntity<Account> createAccountForProfile(@PathVariable(value = "email") String email, @RequestBody AccountDTO accountDTO) {
+        Optional<Profile> optionalProfile = profileRepository.findByEmail(email);
+        if (optionalProfile.isPresent()) {
+            Account account = new Account(accountDTO);
+            profileBusiness.saveProfileWithAccount(optionalProfile.get(), account);
+            return new ResponseEntity<>(account, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 }

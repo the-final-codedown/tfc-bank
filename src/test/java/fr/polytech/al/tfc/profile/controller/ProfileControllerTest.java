@@ -63,23 +63,5 @@ public class ProfileControllerTest {
         assertEquals(profile, profileRepository.findByEmail(emailTest).get());
     }
 
-    @Test
-    public void createAccountForProfile() throws Exception {
-        final String emailTest = "createAccountForProfile";
-        Profile profile = new Profile(emailTest);
-        profileRepository.save(profile);
-        assertEquals(0, profile.getAccounts().size());
 
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("money", 800);
-        jsonObject.addProperty("accountType", AccountType.CHECK.name());
-
-        mockMvc.perform(post("/profiles/" + emailTest + "/accounts")
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonObject.toString()))
-                .andExpect(status().isOk());
-        profile = profileRepository.findByEmail(emailTest).get();
-        assertEquals(1, profile.getAccounts().size());
-    }
 }
