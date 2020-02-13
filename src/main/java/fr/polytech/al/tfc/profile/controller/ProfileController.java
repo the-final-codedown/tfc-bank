@@ -22,13 +22,11 @@ public class ProfileController {
 
     private final AccountRepository accountRepository;
 
-    private final ProfileBusiness profileBusiness;
 
     @Autowired
     public ProfileController(ProfileRepository profileRepository, AccountRepository accountRepository, ProfileBusiness profileBusiness) {
         this.profileRepository = profileRepository;
         this.accountRepository = accountRepository;
-        this.profileBusiness = profileBusiness;
     }
 
     @GetMapping("/{email}")
@@ -46,14 +44,5 @@ public class ProfileController {
         return new ResponseEntity<>(profile, HttpStatus.OK);
     }
 
-    @PostMapping("/{email}/accounts")
-    public ResponseEntity<Account> createAccountForProfile(@PathVariable(value = "email") String email, @RequestBody AccountDTO accountDTO) {
-        Optional<Profile> optionalProfile = profileRepository.findByEmail(email);
-        if (optionalProfile.isPresent()) {
-            Account account = new Account(accountDTO);
-            profileBusiness.saveProfileWithAccount(optionalProfile.get(), account);
-            return new ResponseEntity<>(account, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+
 }
