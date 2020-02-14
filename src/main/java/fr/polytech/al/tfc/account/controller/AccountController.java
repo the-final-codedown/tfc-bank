@@ -5,13 +5,13 @@ import fr.polytech.al.tfc.account.model.AccountDTO;
 import fr.polytech.al.tfc.account.model.AccountType;
 import fr.polytech.al.tfc.account.model.Cap;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
+import fr.polytech.al.tfc.profile.business.ProfileBusiness;
 import fr.polytech.al.tfc.profile.model.Profile;
 import fr.polytech.al.tfc.profile.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import fr.polytech.al.tfc.profile.business.ProfileBusiness;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +36,11 @@ public class AccountController {
     public ResponseEntity<List<Account>> viewAccounts(@PathVariable(value = "accountType") AccountType accountType) {
         List<Account> accounts = accountRepository.findAllByAccountType(accountType);
         return new ResponseEntity<>(accounts, HttpStatus.OK);
+    }
+
+    @PutMapping
+    public ResponseEntity<Account> updateAccount(@RequestBody Account account) {
+        return new ResponseEntity<>(accountRepository.save(account), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
