@@ -1,5 +1,6 @@
 package fr.polytech.al.tfc.account.model;
 
+import fr.polytech.al.tfc.profile.model.ProfileDTO;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -20,6 +21,8 @@ public class Account {
     private Integer money;
 
     private Integer lastWindow = 0;
+
+    private ProfileDTO owner;
 
     @NonNull
     private AccountType accountType;

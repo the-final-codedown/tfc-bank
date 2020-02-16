@@ -7,6 +7,7 @@ import fr.polytech.al.tfc.account.model.Cap;
 import fr.polytech.al.tfc.account.repository.AccountRepository;
 import fr.polytech.al.tfc.profile.business.ProfileBusiness;
 import fr.polytech.al.tfc.profile.model.Profile;
+import fr.polytech.al.tfc.profile.model.ProfileDTO;
 import fr.polytech.al.tfc.profile.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -65,6 +66,7 @@ public class AccountController {
         Optional<Profile> optionalProfile = profileRepository.findByEmail(email);
         if (optionalProfile.isPresent()) {
             Account account = new Account(accountDTO);
+            account.setOwner(new ProfileDTO().setEmail(email));
             profileBusiness.saveProfileWithAccount(optionalProfile.get(), account);
             return new ResponseEntity<>(account, HttpStatus.OK);
         }
