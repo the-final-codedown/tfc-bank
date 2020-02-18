@@ -17,7 +17,6 @@ public class ProfileBusiness {
         this.profileRepository = profileRepository;
         this.accountRepository = accountRepository;
     }
-
     public void saveProfileWithAccount(Profile profile, Account account) {
         accountRepository.save(account);
         profile.addAccount(account.getAccountId());
